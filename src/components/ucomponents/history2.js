@@ -3,8 +3,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from './theme';
 import Header from "./header";
 import { his1 } from "../../data/vehicleHistory1";
-// import Sidebar from "../Sidebar/Sidebar";
-
 const History2 = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -15,14 +13,12 @@ const History2 = () => {
       width: 50
     },
     {
-      
       field: "date",
       headerName: "Ngày",
       type: "Date",
       width: 120
     },
     {
-      
       field: "time",
       headerName: "Thời Gian",
       type: "time",

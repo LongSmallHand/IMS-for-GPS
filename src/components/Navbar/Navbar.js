@@ -29,8 +29,7 @@ function Navbar() {
         <nav className='navibar'>
             <div className='navibar-container'>
                 <Link to="/" className='navibar-logo' onClick={closeMobileMenu}>
-                    LONA
-                    {/* <i className="fab fa-typo3"/> */}
+                    LOCA
                 </Link>
 
                 <div className='menu-icon' onClick={handleClick}>

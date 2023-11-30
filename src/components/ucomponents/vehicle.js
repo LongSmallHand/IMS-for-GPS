@@ -3,8 +3,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from '../ucomponents/theme';
 import Header from "../ucomponents/header";
 import { dataVehicles } from "../../data/vehicleData";
-// import Sidebar from "../Sidebar/Sidebar";
-
 const Vehicle = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);

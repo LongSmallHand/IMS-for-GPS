@@ -5,16 +5,8 @@ import { Link } from 'react-router-dom';
 import './Banner.css';
 
 function Banner({
-  lightBg,
-  topLine,
-  lightText,
-  lightTextDesc,
-  headline,
-  description,
-  buttonLabel,
-  img,
-  alt,
-  imgStart
+  lightBg, topLine, lightText, lightTextDesc, headline, description, 
+  buttonLabel, img, alt, imgStart
 }) {
   return (
     <>

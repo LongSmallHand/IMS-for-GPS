@@ -23,7 +23,6 @@ function Section() {
           buttonStyle='btn--primary'
           buttonSize='btn--large'
           link='/user'
-          // onClick={console.log('hey')}
         >
           TRẢI NGHIỆM NGAY 
         </Button>

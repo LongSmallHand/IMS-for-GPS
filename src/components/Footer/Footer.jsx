@@ -8,13 +8,13 @@ function Footer() {
     <div className='footer-container'>
 
       <section className='footer-subscription'>
-        <p className='footer-subscription-heading'>
+        <p style={{marginBottom:"24px", fontSize:"24px"}}>
           Đăng ký để nhận thông báo mới nhất từ LONA
         </p>
-        <p className='footer-subscription-text'>
+        <p style={{marginBttom:"24px", fontSize: "20px"}}>
           Bạn có thể hủy đăng ký bất cứ lúc nào.
         </p>
-        <div className='input-areas'>
+        <div className='input-areas' style={{marginTop:"1rem"}}>
           <form>
             <input
               className='footer-input'
@@ -72,7 +72,7 @@ function Footer() {
           </div>
 
 
-          {/* <small class='website-rights'>LOCA © 2023</small> */}
+          {/* <small style={{ color:"#fff", marginBottom:"16px"}}>LOCA Since 2023</small> */}
 
 
           <div class='social-icons'>

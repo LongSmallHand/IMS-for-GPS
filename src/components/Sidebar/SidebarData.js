@@ -1,19 +1,22 @@
 import React from 'react';
-import * as FaIcons from 'react-icons/fa';
-import * as AiIcons from 'react-icons/ai';
-import * as IoIcons from 'react-icons/io';
 import * as RiIcons from 'react-icons/ri';
+import * as BsIcons from "react-icons/bs";
 
 export const SidebarData = [
   { 
     title: 'Bản đồ',
     path: '/user',
-    icon: <AiIcons.AiFillHome />,
+    icon: <BsIcons.BsPinMap />,
+  },
+  { 
+    title: 'Bảng điều khiển',
+    path: '/user/dashboard',
+    icon: <BsIcons.BsFillKeyboardFill />,
   },
   { 
     title: 'Người dùng',
     // path: '',
-    icon: <AiIcons.AiFillHome />,
+    icon: <BsIcons.BsPeople />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
 
@@ -21,19 +24,19 @@ export const SidebarData = [
       {
         title: 'Thông tin',
         path: '/user/info',
-        icon: <IoIcons.IoIosPaper />
+        icon: <BsIcons.BsFillPersonVcardFill />
       },
       {
         title: 'Quản lý xe',
         path: '/user/vehicles',
-        icon: <IoIcons.IoIosPaper />
+        icon: <BsIcons.BsCarFrontFill />
       }
     ]
   },
   {
     title: 'Dữ liệu',
     // path: '',
-    icon: <IoIcons.IoIosPaper />,
+    icon: <BsIcons.BsFileEarmarkTextFill />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
 
@@ -41,51 +44,23 @@ export const SidebarData = [
       {
         title: 'Phương tiện 1',
         path: '/user/car1',
-        icon: <IoIcons.IoIosPaper />
-        // cName: 'sub-nav'
+        icon: <BsIcons.BsCarFrontFill />
       },
       {
         title: 'Phương tiện 2',
         path: '/user/car2',
-        icon: <IoIcons.IoIosPaper />
-        // cName: 'sub-nav'
+        icon: <BsIcons.BsCarFrontFill />
       }
     ]
   },
-  {
-    title: 'Thông báo',
-    path: '/user/noti',
-    icon: <FaIcons.FaCartPlus />
-  },
   // {
-  //   title: 'Team',
-  //   path: '/team',
-  //   icon: <IoIcons.IoMdPeople />
-  // },
-  // {
-  //   title: 'Messages',
-  //   path: '/messages',
-  //   icon: <FaIcons.FaEnvelopeOpenText />,
-
-  //   iconClosed: <RiIcons.RiArrowDownSFill />,
-  //   iconOpened: <RiIcons.RiArrowUpSFill />,
-
-  //   subNav: [
-  //     {
-  //       title: 'Message 1',
-  //       path: '/messages/message1',
-  //       icon: <IoIcons.IoIosPaper />
-  //     },
-  //     {
-  //       title: 'Message 2',
-  //       path: '/messages/message2',
-  //       icon: <IoIcons.IoIosPaper />
-  //     }
-  //   ]
+  //   title: 'Thông báo',
+  //   // path: '/user/noti',
+  //   icon: <BsIcons.BsBellFill />
   // },
   {
     title: 'Hỗ Trợ',
-    path: '/support',
-    icon: <IoIcons.IoMdHelpCircle />
+    path: '/user/support',
+    icon: <BsIcons.BsFillQuestionSquareFill />
   }
 ];

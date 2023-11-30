@@ -14,6 +14,7 @@ const hereIcon = new Icon ({
   iconSize: [40, 40]
 })
 
+// Example markers
 const markers = [
   {
     geocode: [10.780161, 106.633583],
@@ -43,26 +44,27 @@ const markers = [
 
 
 function Map() {
-  const mapRef = useRef();
 
+  const mapRef = useRef();
   const [current_position, setPosition] = useState(null);
 
   useEffect(() => {
-    const watchId = navigator.geolocation.watchPosition((newPosition) => {
-      const { latitude, longitude } = newPosition.coords;
+    const watch = navigator.geolocation.watchPosition((position) => {
+      const { latitude, longitude } = position.coords;
       setPosition([latitude, longitude]);
       mapRef.current.setView([latitude, longitude], mapRef.current.getZoom());
     });
-
     return () => {
-      navigator.geolocation.clearWatch(watchId);
+      navigator.geolocation.clearWatch(watch);
     };
   }, []);
+
+  
 
   return (
     <MapContainer ref={mapRef} center={[0, 0]} zoom={17} scrollWheelZoom={true}>
       <TileLayer 
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={20}
       />
 
       {/* Show current position*/}

@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from '../../Navbar/Navbar';
-import Footer from '../../Footer/Footer';
-import '../../../App.css';
+import Navbar from '../Navbar/Navbar';
+import Footer from '../Footer/Footer';
+import '../../App.css';
 
 function About() {
   return (

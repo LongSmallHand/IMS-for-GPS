@@ -1,7 +1,7 @@
 export const his1 = [
     {
       id: 1,
-      date: "2023-10-29",
+      date: "29-10-2023",
       time: "12:00:00",
       temp: 20,
       speed: 35,
@@ -11,7 +11,7 @@ export const his1 = [
     },
     {
       id: 2,
-      date: "2023-10-29",
+      date: "29-10-2023",
       time: "12:00:00",
       temp: 20,
       speed: 35,
