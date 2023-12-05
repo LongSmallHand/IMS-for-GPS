@@ -7,13 +7,7 @@ import Contact from './components/pages/Contact';
 import SignUp from './components/pages/SignUp';
 import Home from './components/pages/Home/Home';
 import User from './components/pages/User';
-
 import './App.css';
-// import Vehicle from './components/ucomponents/vehicle';
-// import Info from './components/ucomponents/info';
-// import History1 from './components/ucomponents/history1';
-// import History2 from './components/ucomponents/history2';
-// import Dashboard from './components/ucomponents/dashboard';
 
 function App() {
   return (

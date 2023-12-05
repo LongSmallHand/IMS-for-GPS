@@ -42,7 +42,7 @@ const History2 = () => {
     },
     {
       field: "door",
-      headerName: "Tình trạng cửa",
+      headerName: "Trạng thái",
       type: "boolean",
       flex: 1,
     },

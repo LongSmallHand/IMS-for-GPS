@@ -1,16 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import './Map.css'
 import MarkerClusterGroup from 'react-leaflet-cluster/lib';
+import './Map.css'
+import SearchField from './Search';
 
 const customIcon = new Icon ({
-  iconUrl: "image/icon-2.png", 
+  iconUrl: "image/car.png", 
   iconSize: [40, 40]
 })
 
 const hereIcon = new Icon ({
-  iconUrl: "image/icon-3.png", 
+  iconUrl: "image/icon-2.png", 
   iconSize: [40, 40]
 })
 
@@ -44,7 +45,6 @@ const markers = [
 
 
 function Map() {
-
   const mapRef = useRef();
   const [current_position, setPosition] = useState(null);
 
@@ -54,18 +54,13 @@ function Map() {
       setPosition([latitude, longitude]);
       mapRef.current.setView([latitude, longitude], mapRef.current.getZoom());
     });
-    return () => {
-      navigator.geolocation.clearWatch(watch);
-    };
+    return () => {navigator.geolocation.clearWatch(watch)};
   }, []);
 
-  
-
   return (
-    <MapContainer ref={mapRef} center={[0, 0]} zoom={17} scrollWheelZoom={true}>
-      <TileLayer 
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={20}
-      />
+    <MapContainer ref={mapRef} center={[0, 0]} zoom={15} scrollWheelZoom={true}>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={20}/>
+      <SearchField/>
 
       {/* Show current position*/}
       { current_position && (
