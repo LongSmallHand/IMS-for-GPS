@@ -23,7 +23,7 @@ const Vehicle = () => {
     },
     {
       field: "temp",
-      headerName: "Temperature",
+      headerName: "Nhiệt độ",
       type: "number",
       headerAlign: "center",
       align: "center",
@@ -31,7 +31,7 @@ const Vehicle = () => {
     },
     {
       field: "speed",
-      headerName: "Speed",
+      headerName: "Vận tốc",
       type: "number",
       headerAlign: "center",
       align: "center",
@@ -39,7 +39,7 @@ const Vehicle = () => {
     },
     {
       field: "door",
-      headerName: "Open Status",
+      headerName: "Trạng thái",
       type: "boolean",
       headerAlign: "center",
       align:"center",
@@ -47,7 +47,7 @@ const Vehicle = () => {
     },
     {
       field: "fuel",
-      headerName: "Fuel",
+      headerName: "Nhiên liệu",
       type: "number",
       headerAlign: "center",
       align: "center",
@@ -55,7 +55,7 @@ const Vehicle = () => {
     },
     {
       field: "pos",
-      headerName: "Position",
+      headerName: "Vị trí",
       flex: 1,
       width: 300
     },
@@ -94,8 +94,7 @@ const Vehicle = () => {
             },
           }}
         >
-          <DataGrid 
-          // checkboxSelection 
+          <DataGrid
           rows={dataVehicles} 
           columns={columns} 
           pageSizeOptions={2}  

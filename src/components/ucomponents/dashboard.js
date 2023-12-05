@@ -56,7 +56,7 @@ const Dashboard = () => {
       />
 
       {/* Device 2 */}
-      <DeviceBoard
+      {/* <DeviceBoard
       id="2"
       devName="Honda"
       devNum="59D1 - 999.99"
@@ -67,7 +67,7 @@ const Dashboard = () => {
       fuel="40"
       speed="35"
       state="Dừng"
-      />
+      /> */}
     </Box>
   );
 };

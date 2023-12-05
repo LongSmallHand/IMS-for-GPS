@@ -7,7 +7,7 @@ video {
   }
   
   .hero-container {
-    background: url('../../image/img-1.jpg') center center/cover no-repeat;
+    background: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1844&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center center/cover no-repeat;
     height: 100vh;
     width: 100%;
     display: flex;
@@ -20,53 +20,42 @@ video {
   
   .hero-container > h1 {
     color: #fff;
-    font-size: 100px;
-    margin-top: -100px;
+    font-size: 7rem;
+    margin-top: -3rem;
   }
   
   .hero-container > p {
     margin-top: 8px;
     color: #fff;
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 800;
     font-family: 'Times New Roman', Times, serif;
   }
   
   .hero-btns {
-    margin-top: 32px;
+    margin-top: 1rem;
   }
   
-  .hero-btns .btn {
-    margin: 6px;
-  }
-  
-  .fa-play-circle {
-    margin-left: 4px;
-  }
   
   @media screen and (max-width: 960px) {
     .hero-container > h1 {
-      font-size: 70px;
-      margin-top: -150px;
+      font-size: 5rem;
+    }
+    .hero-container > p {
+      font-size: 1.5rem;
     }
   }
   
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 680px) {
     .hero-container > h1 {
-      font-size: 50px;
-      margin-top: -100px;
+      font-size: 4rem;
     }
   
     .hero-container > p {
-      font-size: 30px;
+      font-size: 1.1rem;
     }
-  
-    .btn-mobile {
-      display: block;
-      text-decoration: none;
-    }
-  
-    .btn {
+
+    .Button {
       width: 100%;
     }
   }

@@ -1,10 +1,9 @@
 * {
-    line-height: normal !important;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* font-family: 'PT Sans', sans-serif; */
     font-family: 'Arial', sans-serif;
+    /* font-family: 'PT Sans', sans-serif; */
     /* font-family: Roboto; */
   }
   
@@ -17,38 +16,10 @@
     height: 90vh;
     align-items: center;
     justify-content: center;
-    font-size: 3rem !important;
-  }
-  
-  .about-us {
-    background-image: url('./image/img-4.jpg');
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #fff;
-    font-size: 4vw !important;
   }
 
-  .services {
-    background-image: url('./image/img-2.jpg');
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #fff;
-    font-size: 100px;
-  }
-  
-  .contact {
-    background-image: url('./image/img-3.jpg');
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #fff;
-    font-size: 100px;
-  }
-  
   .sign-up {
-    background-image: url('./image/img-6.jpg');
+    background-image: url('C:/DATN/gps-app/public/image/img-6.jpg');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat; 
@@ -58,7 +29,7 @@
 
 .content {
   height: 100%;
-  width: fit-content;
+  width: 100%;
 }
 
 .app {
@@ -66,8 +37,4 @@
   height: 100%;
   display: flex;
   position: relative;
-}
-
-p {
-  margin-bottom: 5px !important;
 }

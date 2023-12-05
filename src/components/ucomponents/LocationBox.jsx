@@ -12,7 +12,7 @@ const LocaBox = ({ devName, devNum, lat, lng, img, time, id}) => {
     name.innerHTML = data.features[0].properties.address_line2;
     clearInterval(check);
   }
-  let check = setInterval(takeLocation, 1000);
+  let check = setInterval(takeLocation, 5000);
   return (
     <Box width="100%" m="0 1.5rem">
       <Box>
@@ -32,8 +32,8 @@ const LocaBox = ({ devName, devNum, lat, lng, img, time, id}) => {
           <Typography 
           id={ `location_${id}`}
           fontSize="1rem" fontWeight="500" 
-          marginLeft="0.2rem" 
-          sx={{ color: colors.grey[100] }}>
+          marginLeft="0.5rem" 
+          sx={{ color: colors.grey[100], width:"85%"}}>
           </Typography>
         </Typography>
       </Box>

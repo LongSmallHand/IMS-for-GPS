@@ -9,18 +9,19 @@ function Footer() {
 
       <section className='footer-subscription'>
         <p style={{marginBottom:"24px", fontSize:"24px"}}>
-          Đăng ký để nhận thông báo mới nhất từ LONA
+          Đăng ký để nhận thông báo mới nhất từ LOCA
         </p>
         <p style={{marginBttom:"24px", fontSize: "20px"}}>
           Bạn có thể hủy đăng ký bất cứ lúc nào.
         </p>
-        <div className='input-areas' style={{marginTop:"1rem"}}>
+        <div className='input-areas' style={{marginTop:"1rem", }}>
           <form>
             <input
               className='footer-input'
               name='email'
               type='email'
               placeholder='Nhập Email'
+              style={{borderRadius:"0.8rem"}}
             />
             <Button buttonStyle='btn--outline'>Đăng Ký</Button>
           </form>
@@ -67,7 +68,7 @@ function Footer() {
         <div class='social-media-wrap'>
           <div class='footer-logo'>
             <Link to='/' className='social-logo'>
-              LONA
+              LOCA
             </Link>
           </div>
 
