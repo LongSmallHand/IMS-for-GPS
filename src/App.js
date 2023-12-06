@@ -7,6 +7,7 @@ import Contact from './components/pages/Contact';
 import SignUp from './components/pages/SignUp';
 import Home from './components/pages/Home/Home';
 import User from './components/pages/User';
+import Admin from './components/pages/Admin';
 import './App.css';
 
 function App() {
@@ -26,6 +27,16 @@ function App() {
             <Route path='car1'/>
             <Route path='car2'/>
             <Route path='support'/>
+          </Route>
+          <Route path='/admin/*' element={<Admin/>}>
+            <Route path='team'/>          
+            <Route path='device'/>
+            <Route path='invoices'/>
+            <Route path='form'/>
+            <Route path='line'/>
+            <Route path='faq'/>
+            <Route path="calendar" />
+            <Route path="geography"/>
           </Route>
         </Routes>
       </Router>
