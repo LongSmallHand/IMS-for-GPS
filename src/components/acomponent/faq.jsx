@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, Button, TextField, useTheme } from "@mui/material";
 import Header from "./Header";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -17,49 +17,93 @@ const FAQ = () => {
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography color={colors.greenAccent[500]} variant="h5">
-            Thắc mắc về anh Nong
+            Vấn đề về GPS
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Anh Nong đẹp trai vl 
+            Thiết bị không nhận được dữ liệu định vị
           </Typography>
+          <Box display="flex" justifyContent={"space-between"} sx={{marginTop:"1rem"}}>
+          <TextField
+            variant="outlined"
+            type="text"
+            label="Trả lời"
+            sx={{ fontSize:"1rem", maxWidth:"75%", minWidth:"70%"}}
+          />  
+          <Button type="submit" color="secondary" sx={{fontSize:"0.8rem", right:"20px", maxWidth:"20%"}} >
+            Xác nhận
+          </Button>
+          </Box>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography color={colors.greenAccent[500]} variant="h5">
-          Thắc mắc về anh Nghĩa
+          Lượng nhiên liệu đo được không chính xác
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Anh Nghĩa có mấy người yêu ?
           </Typography>
+          <Box display="flex" justifyContent={"space-between"} sx={{marginTop:"1rem"}}>
+          <TextField
+            variant="outlined"
+            type="text"
+            label="Trả lời"
+            sx={{ fontSize:"1rem", maxWidth:"75%", minWidth:"70%"}}
+          />  
+          <Button type="submit" color="secondary" sx={{fontSize:"0.8rem", right:"20px", maxWidth:"20%"}} >
+            Xác nhận
+          </Button>
+          </Box>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography color={colors.greenAccent[500]} variant="h5">
-            Thắc mắc về anh Huy
+            Lỗi cam
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Đít anh Huy có ổn không ?
+            Hình ảnh nhận được từ camera không nhìn thấy được
           </Typography>
+          <Box display="flex" justifyContent={"space-between"} sx={{marginTop:"1rem"}}>
+          <TextField
+            variant="outlined"
+            type="text"
+            label="Trả lời"
+            sx={{ fontSize:"1rem", maxWidth:"75%", minWidth:"70%"}}
+          />  
+          <Button type="submit" color="secondary" sx={{fontSize:"0.8rem", right:"20px", maxWidth:"20%"}} >
+            Xác nhận
+          </Button>
+          </Box>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography color={colors.greenAccent[500]} variant="h5">
-          Thắc mắc về anh Lam
+          Cách thêm thiết bị
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Tiền lương anh Lam nhiều vậy làm sao tiêu hết ?
+            Làm sao để thêm thiết bị mới vào hệ thống ?
           </Typography>
+          <Box display="flex" justifyContent={"space-between"} sx={{marginTop:"1rem"}}>
+          <TextField
+            variant="standard"
+            type="text"
+            label="Tại trang 'Bảng điều khiển', nhấn vào nút 'Thêm thiết bị', nhận vào ID thiết bị và tên phương tiện để yêu cầu hệ thống thêm thiết bị mới vào."
+            disabled
+            sx={{ fontSize:"1rem", maxWidth:"75%", minWidth:"70%"}}
+          />  
+          <Button type="submit" color="secondary" disabled sx={{fontSize:"0.8rem", right:"20px", maxWidth:"20%"}} >
+            Đã trả lời
+          </Button>
+          </Box>
         </AccordionDetails>
       </Accordion>
     </Box>

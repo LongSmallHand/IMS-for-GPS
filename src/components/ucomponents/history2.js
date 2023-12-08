@@ -38,13 +38,14 @@ const History2 = () => {
       type: "number",
       headerAlign: "center",
       align: "center",
-      width: 90
+      width: 90,
     },
     {
       field: "door",
       headerName: "Trạng thái",
       type: "boolean",
-      flex: 1,
+      headerAlign: "center",
+      width: 90,
     },
     {
       field: "fuel",
@@ -69,6 +70,9 @@ const History2 = () => {
         <Box
           m="40px 0 0 0"
           height="100%"
+          maxHeight="70vh"
+          maxWidth="1000px"
+          // width="max-content"
           sx={{
             "& .MuiDataGrid-root": {
               border: "none",

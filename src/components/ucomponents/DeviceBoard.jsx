@@ -2,13 +2,24 @@ import { Box, useTheme, Typography } from "@mui/material";
 import { tokens } from "./theme";
 import { mockTransactions } from "../../data/mockData";
 import * as BsIcons from "react-icons/bs";
-import * as LuIcons from "react-icons/lu";
+import { FaSquareParking } from "react-icons/fa6";
+import { IoSpeedometer } from "react-icons/io5";
 import StatBox from "./StatBox";
 import LocaBox from "./LocationBox";
 import WeatherBox from "./WeatherBox";
+
 const DeviceBoard = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  var icon;
+  if(state === 'Di chuyển'){
+    icon = <BsIcons.BsCarFrontFill 
+    style={{ color: colors.greenAccent[600], fontSize:"2rem", marginLeft:"0.25rem"}}/>
+  }
+  else {
+    icon = <FaSquareParking 
+    style={{ color: colors.greenAccent[600], fontSize:"2rem", marginLeft:"0.25rem"}}/>
+  }
 
   return (
     <Box
@@ -55,7 +66,7 @@ const DeviceBoard = ({ devName, devNum, lat, lng, img, time, fuel, speed, state,
                 title="Nhiên liệu"
                 subtitle="(%)"
                 data={fuel}
-                jc="space-between"
+                jc="space-evenly"
                 icon={<BsIcons.BsFuelPumpFill style={{ 
                 color: colors.redAccent[600], 
                 fontSize:"2rem", 
@@ -74,8 +85,8 @@ const DeviceBoard = ({ devName, devNum, lat, lng, img, time, fuel, speed, state,
             <StatBox
                 title="Tốc độ"
                 data={speed}
-                jc="space-between"
-                icon={<BsIcons.BsSpeedometer2 style={{ 
+                jc="space-evenly"
+                icon={<IoSpeedometer style={{ 
                 color: colors.blueAccent[500], 
                 fontSize:"2rem", 
                 marginLeft:"0.25rem"}}/>}
@@ -109,11 +120,7 @@ const DeviceBoard = ({ devName, devNum, lat, lng, img, time, fuel, speed, state,
             <StatBox
                 title="Trạng thái"
                 jc="center"
-                icon={<LuIcons.LuParkingSquare style={{ 
-                color: colors.greenAccent[600], 
-                fontSize:"2rem", 
-                marginLeft:"0.25rem"
-                }}/>}
+                icon={icon}
                 subtitle={state}
             />
             </Box>

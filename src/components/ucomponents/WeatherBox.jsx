@@ -30,8 +30,7 @@ const WeatherBox = ({lat, lng, id}) => {
   return (
     <Box width="100%" m="0 10px">
       <Box display="flex" justifyContent="space-around" justifySelf="center">
-        <Box display="grid" justifyContent="center" borderRight="2px solid" 
-        borderColor={colors.grey[900]} width="9rem">
+        <Box display="grid" justifyContent="center" width="9rem">
             <Box display="flex" justifyContent="center" >
             <img id={`icon_${id}`} src="" alt="Icon thời tiết" 
             style={{display:"flex", justifyContent:"space-evenly", textItem:"center",
@@ -44,7 +43,7 @@ const WeatherBox = ({lat, lng, id}) => {
                 fontWeight="200"
                 sx={{ color: colors.greenAccent[600] }}
                 >
-                    <div id={`temp_${id}`}>0</div>
+                <div id={`temp_${id}`}>0</div>
                 </Typography>
                 <TbTemperatureCelsius style={{ 
                 color: colors.greenAccent[600], 
@@ -58,7 +57,7 @@ const WeatherBox = ({lat, lng, id}) => {
             textAlign="center"
             sx={{ color: colors.grey[300] }}
             >
-                <div id={`desc_${id}`}>Chưa cập nhật thời tiết</div>
+            <div id={`desc_${id}`}>Chưa cập nhật thời tiết</div>
             </Typography>
         </Box>
         <Box display="grid" alignItems="center" alignContent="center">

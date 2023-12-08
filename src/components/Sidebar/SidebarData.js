@@ -42,15 +42,15 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'Phương tiện 1',
+        title: 'AirBlade',
         path: '/user/car1',
         icon: <BsIcons.BsCarFrontFill />
       },
-      {
-        title: 'Phương tiện 2',
-        path: '/user/car2',
-        icon: <BsIcons.BsCarFrontFill />
-      }
+      // {
+      //   title: 'Vision',
+      //   path: '/user/car2',
+      //   icon: <BsIcons.BsCarFrontFill />
+      // }
     ]
   },
   // {

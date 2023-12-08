@@ -18,7 +18,7 @@ const Vehicle = () => {
       field: "name",
       headerName: "Name",
       type: "string",
-      // flex: 1,
+      flex: 1,
       width: 200 
     },
     {
@@ -68,6 +68,8 @@ const Vehicle = () => {
         <Box
           m="40px 0 0 0"
           height="100%"
+          maxHeight="70vh"
+          maxWidth="1000px"
           sx={{
             "& .MuiDataGrid-root": {
               border: "none",

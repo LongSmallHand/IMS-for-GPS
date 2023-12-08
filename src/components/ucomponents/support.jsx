@@ -10,14 +10,14 @@ const Support = () => {
             title="Hỗ trợ người dùng"
             subtitle="Liên hệ với chúng tôi khi bạn có câu hỏi hoặc gặp vấn đề khi sử dụng LOCA"
         />
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="left">
             <Box
             component="form"
-            maxWidth="50vw"
-            minWidth="30rem"
+            maxWidth="70vw"
+            minWidth="40vw"
             sx={{ '& .MuiTextField-root': { m:"1.5rem 1.5rem 0 1.5rem", minWidth:"40%", maxWidth:"90%" } }}
             noValidate
-            autoComplete="off"
+            autoComplete="on"
             backgroundColor="#FFF6F6"
             borderRadius="20px"
             display="grid"
@@ -49,7 +49,7 @@ const Support = () => {
                     id="outlined-helperText"
                     label="Nhập câu hỏi của bạn"
                     helperText="Góp ý của bạn về LOCA"
-                    rows={5}
+                    rows={10}
                     color="success"
                     />
                 </Box>

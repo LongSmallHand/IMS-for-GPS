@@ -44,7 +44,7 @@ const Dashboard = () => {
       {/* Device 1 */}
       <DeviceBoard
       id="1"
-      devName="Mazda"
+      devName="AirBlade"
       devNum="59D1-123.45"
       lat="10.772945833"
       lng="106.658995167"

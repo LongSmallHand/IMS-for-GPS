@@ -1,19 +1,19 @@
 export const dataVehicles = [
   {
     id: 1,
-    name: "Car 1",
-    temp: 20,
-    speed: 35,
+    name: "AirBlade",
+    temp: 35,
+    speed: 42,
     door: true,
     fuel: 60,
     pos: "Ho Chi Minh City",
   },
   {
     id: 2,
-    name: "Car 2",
-    temp: 20,
+    name: "Vision",
+    temp: 34,
     speed: 35,
-    door: true,
+    door: false,
     fuel: 40,
     pos: "Ho Chi Minh City",
   }
