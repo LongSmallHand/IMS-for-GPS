@@ -1,5 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "./theme";
+import { useEffect } from "react";
 
 const LocaBox = ({ devName, devNum, lat, lng, img, time, id}) => {
   const theme = useTheme();
@@ -12,6 +13,12 @@ const LocaBox = ({ devName, devNum, lat, lng, img, time, id}) => {
     name.innerHTML = data.features[0].properties.address_line2;
     clearInterval(check);
   }
+
+  useEffect(() => {
+    // Call takeData when the component is mounted
+    takeLocation();
+  }, []); // Empty dependency array ensures that it runs only once when the component mounts
+
   let check = setInterval(takeLocation, 5000);
   return (
     <Box width="100%" m="0 1.5rem">

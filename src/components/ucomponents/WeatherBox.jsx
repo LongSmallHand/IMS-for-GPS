@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme, Button } from "@mui/material";
 import { tokens } from "./theme";
 import { TbTemperatureCelsius } from "react-icons/tb";
-
+import { useEffect } from "react";
 
 const WeatherBox = ({lat, lng, id}) => {
   const theme = useTheme();
@@ -26,6 +26,12 @@ const WeatherBox = ({lat, lng, id}) => {
     let icon = document.getElementById(`icon_${id}`);
     icon.src = "https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
   }
+
+
+  useEffect(() => {
+    // Call takeData when the component is mounted
+    takeData();
+  }, []); // Empty dependency array ensures that it runs only once when the component mounts
 
   return (
     <Box width="100%" m="0 10px">

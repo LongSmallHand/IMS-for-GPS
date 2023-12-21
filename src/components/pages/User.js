@@ -1,7 +1,8 @@
-import React from 'react';
+import {React, useEffect} from 'react';
+import { useAuth } from './AuthContext';
 import '../../App.css';
 import Map from '../Map/Map';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Vehicle from '../ucomponents/vehicle';
 import History1 from '../ucomponents/history1';
@@ -9,9 +10,23 @@ import Info from '../ucomponents/info';
 import History2 from '../ucomponents/history2';
 import Dashboard from '../ucomponents/dashboard';
 import Support from '../ucomponents/support';
+import { CircularProgress } from '@mui/material';
 
 function User() {
-  return (
+  
+  // const [login, setLogin] = useState(false)
+  const { authUser, isLoading } = useAuth();
+  const router = useNavigate();
+
+  // Listen to changes for loading and authUser, redirect if needed
+  useEffect(() => {
+    if (!isLoading && !authUser){
+      router('/');
+    }
+  }, [authUser, isLoading]);
+
+  return ((!authUser) ? <CircularProgress color='inherit' sx={{marginLeft:'50%', marginTop: '25%'}}/>
+  :
     <div className='app'>
       <Sidebar/>
       <div className='content'>

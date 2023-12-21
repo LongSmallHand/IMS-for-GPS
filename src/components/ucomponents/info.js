@@ -19,6 +19,17 @@ const data = personalData;
 export default function Info() {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
+//     const [isEditing, setIsEditing] = useState(false);
+
+//   const handleEditClick = () => {
+//     setIsEditing(true);
+//   };
+
+//   const handleCancelEdit = () => {
+//     setIsEditing(false);
+//   };
+  
   return (
     <>
     <MDBRow style={{width: 'max-content'}}>
@@ -112,3 +123,8 @@ export default function Info() {
     </>
   );
 }
+
+
+
+
+
