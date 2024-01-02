@@ -3,9 +3,40 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from './theme';
 import Header from "./header";
 import { his1 } from "../../data/vehicleHistory1";
+import { useEffect, useState } from "react";
+import { getDeviceFields } from "./firestore";
+import { useAuth } from "../pages/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 const History1 = () => {
+  const { authUser, isLoading } = useAuth();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const router = useNavigate();
+
+
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    if (!isLoading && !authUser) {
+      router.push('/');
+    }
+  }, [authUser, isLoading])
+
+  useEffect(() => {
+    if (authUser) {
+      // Lấy dữ liệu từ Cloud Firestore
+      const unsubscribe = getDeviceFields(authUser.uid, (newData) => {
+        // Khi có dữ liệu mới, cập nhật danh sách dòng
+        setRows((prevRows) => [...prevRows, newData]);
+      });
+
+      // Hủy đăng ký lắng nghe khi component unmount
+      return () => unsubscribe();
+    }
+  }, [authUser]);
+
+  
   const columns = [
     {
       field: "id", 
@@ -65,6 +96,7 @@ const History1 = () => {
     },
   ];
 
+
   return (
     <>
       <Box m="20px 20px 20px 240px">
@@ -100,7 +132,9 @@ const History1 = () => {
             },
           }}
         >
+          {rows.map((row) => (
           <DataGrid checkboxSelection rows={his1} columns={columns} />
+          ))}
         </Box>
       </Box>
     </>

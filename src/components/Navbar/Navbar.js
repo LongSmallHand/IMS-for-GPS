@@ -55,7 +55,8 @@ function Navbar() {
                     <li className='navi-btn'>
                         {button ? (
                         <div className='btn-link'>
-                            <Button buttonStyle='btn--outline' link='/sign-up'>
+                            {/* <Button buttonStyle='btn--outline' link='/sign-up'> */}
+                            <Button buttonStyle='btn--outline' link='/register'>
                             Đăng Ký
                             </Button>
                         </div>
@@ -63,12 +64,33 @@ function Navbar() {
                         <div className='btn-link'>
                             <Button 
                             buttonStyle='btn--outline' buttonSize='btn--mobile'
-                            onClick={closeMobileMenu} link='/sign-up'> 
+                            // onClick={closeMobileMenu} link='/sign-up'> 
+                            onClick={closeMobileMenu} link='/register'> 
                             Đăng Ký 
                             </Button>
                         </div>
                         )}
                     </li>
+                    <li className='navi-btn'>
+                        {button ? (
+                        <div className='btn-link'>
+                            {/* <Button buttonStyle='btn--outline' link='/sign-up'> */}
+                            <Button buttonStyle='btn--outline' link='/login'>
+                            Đăng Nhập
+                            </Button>
+                        </div>
+                        ) : (
+                        <div className='btn-link'>
+                            <Button 
+                            buttonStyle='btn--outline' buttonSize='btn--mobile'
+                            // onClick={closeMobileMenu} link='/sign-up'> 
+                            onClick={closeMobileMenu} link='/login'> 
+                            Đăng Nhập 
+                            </Button>
+                        </div>
+                        )}
+                    </li>
+                    
                 </ul>
             </div>
         </nav>
