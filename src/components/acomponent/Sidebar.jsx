@@ -142,20 +142,20 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Quản lý thiết bị"
               to="/admin/device"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <Item
+            /> */}
+            {/* <Item
               title="Thu nhập"
               to="/admin/invoices"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
 
             <Typography
               variant="h6"
@@ -200,13 +200,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             /> */}
-            <Item
+            {/* <Item
               title="Biểu đồ Doanh số"
               to="/admin/line"
               icon={<TimelineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Item
               title="Biểu đồ Địa lý"
               to="/admin/geography"

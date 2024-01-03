@@ -15,43 +15,43 @@ export const SidebarData = [
   },
   { 
     title: 'Người dùng',
-    // path: '',
+    path: '/user/info',
     icon: <BsIcons.BsPeople />,
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
+    // iconClosed: <RiIcons.RiArrowDownSFill />,
+    // iconOpened: <RiIcons.RiArrowUpSFill />,
 
-    subNav: [
-      {
-        title: 'Thông tin',
-        path: '/user/info',
-        icon: <BsIcons.BsFillPersonVcardFill />
-      },
-      // {
-      //   title: 'Quản lý xe',
-      //   path: '/user/vehicles',
-      //   icon: <BsIcons.BsCarFrontFill />
-      // }
-    ]
+    // subNav: [
+    //   {
+    //     title: 'Thông tin',
+    //     path: '/user/info',
+    //     icon: <BsIcons.BsFillPersonVcardFill />
+    //   },
+    //   // {
+    //   //   title: 'Quản lý xe',
+    //   //   path: '/user/vehicles',
+    //   //   icon: <BsIcons.BsCarFrontFill />
+    //   // }
+    // ]
   },
   {
     title: 'Dữ liệu',
-    // path: '',
+    path: '/user/car1',
     icon: <BsIcons.BsFileEarmarkTextFill />,
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
+    // iconClosed: <RiIcons.RiArrowDownSFill />,
+    // iconOpened: <RiIcons.RiArrowUpSFill />,
 
-    subNav: [
-      {
-        title: 'Phương tiện',
-        path: '/user/car1',
-        icon: <BsIcons.BsCarFrontFill />
-      },
-      // {
-      //   title: 'Vision',
-      //   path: '/user/car2',
-      //   icon: <BsIcons.BsCarFrontFill />
-      // }
-    ]
+    // subNav: [
+    //   {
+    //     title: 'Phương tiện',
+    //     path: '/user/car1',
+    //     icon: <BsIcons.BsCarFrontFill />
+    //   },
+    //   // {
+    //   //   title: 'Vision',
+    //   //   path: '/user/car2',
+    //   //   icon: <BsIcons.BsCarFrontFill />
+    //   // }
+    // ]
   },
   // {
   //   title: 'Thông báo',

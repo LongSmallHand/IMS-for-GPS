@@ -3,12 +3,20 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "./Header";
+import { db } from "../../firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    try {
+      // Save the form data to the 'admin' collection in Firestore
+      const docRef = await addDoc(collection(db, 'admin'), values);
+      console.log('Document written with ID: ', docRef.id);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   };
 
   return (

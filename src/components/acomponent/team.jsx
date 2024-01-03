@@ -53,9 +53,9 @@ const Team = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/users/test" style={{ textDecoration: "none" }}>
+            {/* <Link to="/users/test" style={{ textDecoration: "none" }}>
               <div className="viewButton">View</div>
-            </Link>
+            </Link> */}
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
@@ -70,10 +70,10 @@ const Team = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        Manage User
-        <Link to="/users/new" className="link">
+        Quản lý người dùng
+        {/* <Link to="/users/new" className="link">
           Add New
-        </Link>
+        </Link> */}
       </div>
       <DataGrid
         className="datagrid"

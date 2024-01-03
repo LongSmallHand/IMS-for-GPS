@@ -36,7 +36,7 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
     const deviceRef = doc(db, 'devices', deviceKey);
 
     try {
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= 20; i++) {
         const dataRef = doc(deviceRef, 'data', `${i}`);
         await updateDoc(dataRef, {
           devName: devName,
@@ -44,6 +44,12 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
           uid: authUser.uid
         });
       }
+      await updateDoc(deviceRef, {
+        devName: devName,
+        devNum: devNum,
+        uid: authUser.uid
+      });
+        
 
       console.log('Kết nối thành công!');
       setIsConnected(true);

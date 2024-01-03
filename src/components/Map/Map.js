@@ -140,8 +140,8 @@ function LocationMarker() {
 
 function splitToHms(input) {
   var h, m, s;
-  input = input + 7000000;
-  input = input.toString();
+  // input = input + 7000000;
+  // input = input.toString();
   if (input.length === 8) {
       h = input.slice(0, 2);
       m = input.slice(2, 4);
@@ -205,7 +205,7 @@ function Map() {
           geocode: [data.lat, data.lng],
           speed: data.speed,
           fuel: data.fuel,
-          time: splitToHms(data.t_v),
+          time: data.t_v
         };
         setMarkers((prevMarkers) => [newMarker]);
         // Create a new polyline whenever a new array is added
@@ -273,7 +273,7 @@ function Map() {
                 height:"4rem", 
                 borderRadius:"10px"}}
               >
-                <div style={{textAlign:"center", color: "white", width:"40%"}}>
+                <div style={{textAlign:"center", color: "white", width:"45%"}}>
                   <IoSpeedometer style={{fontSize:"1.5rem", marginBottom:"5px"}}/> 
                   <div style={{fontSize:"0.9rem"}}>
                   {newMarker.speed} kph

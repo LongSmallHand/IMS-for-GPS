@@ -7,7 +7,7 @@ const DEVICE_COLLECTION = 'devices';
 
 
 export const getDeviceFields2 = async (deviceKey, uid, setDevices) => {
-  const deviceRef = query(collection(db, DEVICE_COLLECTION), where("uid", "==", uid), orderBy("id", "desc"));
+  const deviceRef = query(collection(db, DEVICE_COLLECTION), where("uid", "==", uid));
 
   const unsubscribe = onSnapshot(deviceRef, async (snapshot) => {
     let fields = [];
@@ -29,6 +29,7 @@ export const getDeviceFields2 = async (deviceKey, uid, setDevices) => {
     }
     console.log("All devices: ", fields); // Log all the devices
     setDevices(fields);  // Update state with the fetched devices
+    console.log(fields)
   });
 
   return unsubscribe;  // Return the unsubscribe function for cleanup if needed

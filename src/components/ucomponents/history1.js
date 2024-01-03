@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from './theme';
 import Header from "./header";
@@ -8,6 +8,7 @@ import { useAuth } from "../pages/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import * as XLSX from 'xlsx'; 
 
 
 const History1 = () => {
@@ -59,7 +60,7 @@ const History1 = () => {
       });
       return () => {
         // Cleanup function
-        // unsubscribe();
+        unsubscribe();
       };
     }
   }, [authUser, newDeviceKey]);
@@ -70,16 +71,16 @@ const History1 = () => {
       headerName: "ID",
       width: 70
     },
+    // {
+    //   field: "date",
+    //   headerName: "Ngày",
+    //   type: "Date",
+    //   width: 120
+    // },
     {
-      field: "date",
-      headerName: "Ngày",
-      type: "Date",
-      width: 120
-    },
-    {
-      field: "time",
+      field: "t_v",
       headerName: "Thời Gian",
-      type: "time",
+      type: "text",
       width: 150
     },
     {
@@ -88,7 +89,7 @@ const History1 = () => {
       type: "text",
       headerAlign: "center",
       align: "center",
-      width: 150
+      width: 200
     },
     {
       field: "speed",
@@ -121,6 +122,39 @@ const History1 = () => {
     //   width: 120
     // },
   ];
+
+  const handleDownload = () => {
+    const data = [
+      ['Phương tiện', 'Biển số', 'Nhiên liệu', 'Tốc độ', 'Thời gian'],
+      ...rows.map(row => [row.devName, row.devNum, row.fuel, row.speed, row.t_v])
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Dữ liệu');
+
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+    const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+
+    a.download = 'Report.xlsx';
+
+    a.click();
+
+    URL.revokeObjectURL(a.href);
+  };
+
+  // Helper function to convert string to ArrayBuffer
+  function s2ab(s) {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
 
   return (
     <>
@@ -157,6 +191,20 @@ const History1 = () => {
             },
           }}
         >
+          <Button
+            sx={{
+              backgroundColor: colors.blueAccent[700],
+              color: colors.grey[100],
+              fontSize: "1rem",
+              fontWeight: "normal",
+              margin: "0 0 30px 0",
+              padding: "10px 20px",
+            }}
+            onClick={handleDownload}
+          >
+            Tải xuống
+          </Button>
+
           <DataGrid 
           checkboxSelection 
           rows={rows} 

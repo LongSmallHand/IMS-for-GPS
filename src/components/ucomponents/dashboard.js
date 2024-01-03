@@ -69,7 +69,7 @@ const handleClose = () => {
     const fetchImage = async () => {
       try {
         // giả sử 'path/to/image' là đường dẫn của hình ảnh trong Cloud Storage
-        const imgRef = ref(storage, 'gs://loca-4d172.appspot.com/1704034492305Copy of GPS Tracking System .png');
+        const imgRef = ref(storage, 'https://firebasestorage.googleapis.com/v0/b/loca-4d172.appspot.com/o/photo%2F3.jpg?alt=media&token=ca78d61d-95fb-40b0-8f26-0378fba82ff9');
         const url = await getDownloadURL(imgRef);
         setImg(url); // cập nhật state img với URL của hình ảnh
       } catch (error) {
@@ -83,8 +83,8 @@ const handleClose = () => {
 
   function splitToHms(input) {
     var h, m, s;
-    input = input + 7000000;
-    input = input.toString();
+    // input = input + 7000000;
+    // input = input.toString();
     if (input.length === 8) {
         h = input.slice(0, 2);
         m = input.slice(2, 4);
@@ -185,7 +185,7 @@ const handleClose = () => {
               {/* <button onClick={handleClose}>Đóng</button> */}
       </div>
     )}
-          <Button
+          {/* <Button
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
@@ -198,7 +198,7 @@ const handleClose = () => {
           >
             <BsIcons.BsDownload style={{ margin: "0 10px 0 0"}} />
             Tải xuống
-          </Button>
+          </Button> */}
         </Box>
       </Box>
       
@@ -211,7 +211,7 @@ const handleClose = () => {
     lat={device.lat}
     lng={device.lng}
     img={img}
-    time= {splitToHms(device.time)}// Update thời gian chụp hình gần nhất
+    time= {device.time}// Update thời gian chụp hình gần nhất
     fuel={device.fuel}
     speed={device.speed}
     state={device.state} // set = "Đang đỗ" nếu speed < 2km/h
