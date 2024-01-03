@@ -2,6 +2,7 @@ import {React, useEffect} from 'react';
 import { useAuth } from './AuthContext';
 import '../../App.css';
 import Map from '../Map/Map';
+import { productInputs, userInputs } from "./../ucomponents/formSource"
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Vehicle from '../ucomponents/vehicle';
@@ -33,8 +34,8 @@ function User() {
         <Routes>
           <Route path="/" element={<Map/>} />
           <Route path='dashboard' element={<Dashboard/>}/>          
-          <Route path='info' element={<Info/>}/>
-          <Route path='vehicles' element={<Vehicle/>}/>
+          <Route path='info' element={<Info inputs={userInputs} title="User Profile"/>}/>
+          {/* <Route path='vehicles' element={<Vehicle/>}/> */}
           <Route path='car1' element={<History1/>}/>
           <Route path='car2' element={<History2/>}/>
           <Route path='support' element={<Support/>}/>

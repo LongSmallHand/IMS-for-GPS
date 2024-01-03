@@ -1,104 +1,89 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "./theme";
-import { mockDataTeam } from "../../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import Header from "./Header";
+import { userColumns, userRows } from "./datatablesource"
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Team = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const columns = [
-    { field: "id", headerName: "ID" },
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+  
+    const unsub = onSnapshot(
+      collection(db, "users"),
+      (snapShot) => {
+        let list = [];
+        snapShot.docs.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setData(list);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "users", id));
+      setData(data.filter((item) => item.id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const actionColumn = [
     {
-      field: "name",
-      headerName: "Họ và Tên",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Tuổi",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Số điện thoại",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "accessLevel",
-      headerName: "Quyền truy cập",
-      flex: 1,
-      renderCell: ({ row: { access } }) => {
+      field: "action",
+      headerName: "Action",
+      width: 200,
+      renderCell: (params) => {
         return (
-          <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
-          </Box>
+          <div className="cellAction">
+            <Link to="/users/test" style={{ textDecoration: "none" }}>
+              <div className="viewButton">View</div>
+            </Link>
+            <div
+              className="deleteButton"
+              onClick={() => handleDelete(params.row.id)}
+            >
+              Delete
+            </div>
+          </div>
         );
       },
     },
   ];
-
   return (
-    <Box m="20px">
-      <Header title="LOCA TEAM" subtitle="Quản lý các thành viên trong nhóm" />
-      <Box
-        m="40px 0 0 0"
-        height="65vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-        }}
-      >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
-      </Box>
-    </Box>
+    <div className="datatable">
+      <div className="datatableTitle">
+        Manage User
+        <Link to="/users/new" className="link">
+          Add New
+        </Link>
+      </div>
+      <DataGrid
+        className="datagrid"
+        rows={data}
+        columns={userColumns.concat(actionColumn)}
+        pageSize={9}
+        rowsPerPageOptions={[9]}
+        checkboxSelection
+      />
+    </div>
   );
 };
 

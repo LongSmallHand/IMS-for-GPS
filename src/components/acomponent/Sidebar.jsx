@@ -171,13 +171,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Ghi chú sự kiện"
               to="/admin/calendar"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Item
               title="Phản hồi người dùng"
               to="/admin/faq"

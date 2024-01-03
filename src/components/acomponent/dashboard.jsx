@@ -5,11 +5,93 @@ import StatBox from "./StatBox";
 import LineChart from "./chart/LineChart";
 import ProgressCircle from "./chart/ProgressCircle";
 import * as MuiIcons from "@mui/icons-material";
+import "./home.scss";
+import Widget from "./widget";
+import { collection, query,where, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useState, useEffect } from "react";
+
+
+const calculatePercentageIncrease = (currentCount, previousCount) => {
+  if (previousCount === 0) {
+    return 100; // Tránh chia cho 0 nếu tuần trước không có người dùng
+  }
+  return ((currentCount - previousCount) / previousCount) * 100;
+};
+
+const calculatePercentage = (currentCount, previousCount) => {
+  if (previousCount === 0) {
+    return 100; // Tránh chia cho 0 nếu tuần trước không có người dùng
+  }
+  return ((previousCount) / previousCount + currentCount);
+};
+
+const fetchCollectionCount = async (collectionName) => {
+  try {
+    const col = collection(db, collectionName);
+    const q = query(col);
+    const snapshot = await getDocs(q);
+
+    return snapshot.size;
+  } catch (error) {
+    console.error(`Error fetching data from ${collectionName} collection:`, error);
+    return 0; // Trả về 0 nếu có lỗi
+  }
+};
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const [userCount, setUserCount] = useState(0);
+  const [userCountTime, setUserCountTime] = useState(0);
+  const [deviceCount, setDeviceCount] = useState(0);
+  const [newUserPercentage, setNewUserPercentage] = useState(0);
+  const [percentOldUsers, setPercentOldUsers] = useState(0);
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setUserCount(await fetchCollectionCount("users"));
+      setDeviceCount(await fetchCollectionCount("devices"));
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const today = new Date();
+      const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  
+      const currentMonthQuery = query(
+        collection(db, "users"),
+        where("timeStamp", ">=", firstDayOfCurrentMonth)
+      );
+      const lastMonthQuery = query(
+        collection(db, "users"),
+        where("timeStamp", ">=", firstDayOfLastMonth),
+        where("timeStamp", "<", firstDayOfCurrentMonth)
+      );
+  
+      const currentMonthData = await getDocs(currentMonthQuery);
+      const lastMonthData = await getDocs(lastMonthQuery);
+  
+      setUserCountTime(currentMonthData.size);
+      // console.log(currentMonthData.size)
+      // console.log(lastMonthData.size)
+      setNewUserPercentage(
+        calculatePercentageIncrease(currentMonthData.size, lastMonthData.size)
+      );
+      const percentOldUsers = calculatePercentage(currentMonthData.size, lastMonthData.size);
+      console.log(percentOldUsers)
+      setPercentOldUsers(percentOldUsers); 
+    };
+  
+    fetchData();
+  }, []);
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -48,12 +130,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="8.000.000"
-            subtitle="Doanh thu tháng"
+            title={`${newUserPercentage.toFixed(2)}%`} 
+            subtitle="Tăng so với tháng trước "
             isProgress="true"
-            progress="0.3"
-            progress_1="0.65"
-            increase="+14%"
+            progress={percentOldUsers}
+            progress_1={100 - percentOldUsers}
+            increase={`+${newUserPercentage.toFixed(2)}%`}
             icon={<MuiIcons.PointOfSale sx={{ color: colors.greenAccent[600], fontSize: "26px" }}/>}
           />
         </Box>
@@ -65,8 +147,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="805"
-            subtitle="Số lượng người dùng"
+            title={userCount.toString()} 
+            subtitle="Số lượng người dùng hiện tại"
             icon={<MuiIcons.AccountCircle sx={{ color: colors.greenAccent[600], fontSize: "26px" }}/>}
           />
         </Box>
@@ -78,9 +160,9 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="26"
-            subtitle="Người dùng mới"
-            increase="+5%"
+            title={deviceCount.toString()} 
+            subtitle="Số lượng thiết bị hiện tại"
+            // increase="+9%"
             icon={<MuiIcons.PersonAdd sx={{ color: colors.greenAccent[600], fontSize: "26px" }}/>}
           />
         </Box>
@@ -137,7 +219,7 @@ const Dashboard = () => {
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                17.847.000 VND
+                66.000.000 VND
               </Typography>
             </Box>
             

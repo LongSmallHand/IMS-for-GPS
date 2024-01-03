@@ -7,52 +7,14 @@ import { useAuth } from "../pages/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getDeviceFields } from "./firestore";
+import { getDeviceFields2 } from "./firestore2";
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase";
 import * as XLSX from 'xlsx';
+import AddDeviceForm from "./AddDeviceForm";
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
-
-
-const handleDownload = () => {
-  // Tạo một mảng dữ liệu mẫu
-  const data = [
-    ['Tên', 'Số điện thoại', 'Email'],
-    ['John Doe', '123-456-7890', 'john@example.com'],
-    ['Jane Doe', '987-654-3210', 'jane@example.com'],
-    // ...Thêm dữ liệu của bạn vào đây
-  ];
-
-  // Tạo một đối tượng Worksheet từ mảng dữ liệu
-  const ws = XLSX.utils.aoa_to_sheet(data);
-
-  // Tạo một đối tượng Workbook và thêm Worksheet vào đó
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Dữ liệu');
-
-  // Chuyển đổi Workbook thành dạng nhị phân
-  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-
-  // Tạo một Blob từ dữ liệu nhị phân
-  const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-
-  // Đặt tên cho file tải xuống
-  a.download = 'Report.xlsx';
-
-  // Tạo sự kiện click cho thẻ <a>
-  a.click();
-
-  // Giải phóng URL khi không cần thiết nữa (thường khi người dùng đóng cửa sổ tải xuống)
-  URL.revokeObjectURL(a.href);
-};
-
-// Hàm chuyển đổi chuỗi thành mảng đệm
-function s2ab(s) {
-  const buf = new ArrayBuffer(s.length);
-  const view = new Uint8Array(buf);
-  for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-  return buf;
-}
 
 const Dashboard = () => {
   const { authUser, isLoading } = useAuth();
@@ -62,7 +24,82 @@ const Dashboard = () => {
   
   // State involved in loading and updating device info
   const [devices, setDevices] = useState([]);
-  // const [updateReceipt, setUpdateReceipt] = useState({});
+  const [locationsData, setLocationsData] = useState([]);
+  const [newDeviceKey, setNewDeviceKey] = useState("");
+  const [showDeviceForm, setShowDeviceForm] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchDeviceKey = async () => {
+      if (authUser) {
+        const userRef = doc(db, 'users', authUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.deviceKey) {
+            setNewDeviceKey(userData.deviceKey);
+            console.log("DeviceKey: " + userData.deviceKey)
+          }
+        }
+      }
+    };
+
+    fetchDeviceKey();
+  }, [authUser]);
+
+const handleClick = () => {
+ setIsFormOpen(true);
+};
+
+const handleClose = () => {
+ setIsFormOpen(false);
+};
+
+  
+
+  const handleLocationUpdate = (location) => {
+    // Cập nhật mảng locationsData với dữ liệu mới từ location
+    setLocationsData(prevLocations => [...prevLocations, location]);
+  };
+
+  const [img, setImg] = useState(null);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        // giả sử 'path/to/image' là đường dẫn của hình ảnh trong Cloud Storage
+        const imgRef = ref(storage, 'gs://loca-4d172.appspot.com/1704034492305Copy of GPS Tracking System .png');
+        const url = await getDownloadURL(imgRef);
+        setImg(url); // cập nhật state img với URL của hình ảnh
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, []);
+
+
+  function splitToHms(input) {
+    var h, m, s;
+    input = input + 7000000;
+    input = input.toString();
+    if (input.length === 8) {
+        h = input.slice(0, 2);
+        m = input.slice(2, 4);
+        s = input.slice(4, 6);
+    } else {
+        h = input.slice(0, 1);
+        m = input.slice(1, 3);
+        s = input.slice(3, 5);
+    }
+  
+    return h + "h" + m + "m";
+  }
+
+  
+
 
 
 
@@ -73,12 +110,51 @@ const Dashboard = () => {
   }, [authUser, isLoading])
 
   useEffect(() => {
-    if (authUser) {
-      const unsubscribe = getDeviceFields(authUser.uid, setDevices);
-      // console.log("Devices: ", devices); // Log the devices state
-      // return () => unsubscribe();
+    if (authUser && newDeviceKey) {
+      const unsubscribe = getDeviceFields2(newDeviceKey, authUser.uid, setDevices);
+
+      return () => {
+        // Cleanup function
+        unsubscribe();
+      };
     }
-  }, [authUser]);
+  }, [authUser, newDeviceKey]);
+
+
+  const handleDownload = () => {
+    // Tạo một mảng dữ liệu mẫu
+    const data = [
+      ['Phương tiện', 'Biển số', 'Nhiên liệu', 'Tốc độ'],
+      // ['John Doe', '123-456-7890', 'john@example.com'],
+      // ['Jane Doe', '987-654-3210', 'jane@example.com'],
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+  
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Dữ liệu');
+  
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+  
+    const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+  
+    a.download = 'Report.xlsx';
+
+    a.click();
+  
+    URL.revokeObjectURL(a.href);
+  };
+  
+  // Hàm chuyển đổi chuỗi thành mảng đệm
+  function s2ab(s) {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
 
 
   
@@ -96,10 +172,19 @@ const Dashboard = () => {
               margin: "0 1rem 30px 0",
               padding: "10px 20px",
             }}
+            onClick={handleClick}
           >
             <BsIcons.BsCartPlusFill style={{ margin: "0 10px 0 0"}} />
             Thêm thiết bị
           </Button>
+          {isFormOpen && (
+      <div>
+        <AddDeviceForm isOpen={isFormOpen}
+          handleClose={handleClose}
+          onDeviceKeySubmit={setNewDeviceKey} />
+              {/* <button onClick={handleClose}>Đóng</button> */}
+      </div>
+    )}
           <Button
             sx={{
               backgroundColor: colors.blueAccent[700],
@@ -125,26 +210,15 @@ const Dashboard = () => {
     devNum={device.devNum}
     lat={device.lat}
     lng={device.lng}
-    img={device.img}
-    time="10 giây trước" // Update thời gian chụp hình gần nhất
+    img={img}
+    time= {splitToHms(device.time)}// Update thời gian chụp hình gần nhất
     fuel={device.fuel}
     speed={device.speed}
-    state="Di chuyển" // set = "Đang đỗ" nếu speed < 2km/h
+    state={device.state} // set = "Đang đỗ" nếu speed < 2km/h
+    onLocationUpdate={handleLocationUpdate}
   />
 ))}
-      {/* Device 2 */}
-      {/* <DeviceBoard
-      id="2"
-      devName="Honda"
-      devNum="59D1 - 999.99"
-      lat="10.779529896233225"
-      lng="106.63127133744312"
-      img="https://randomwordgenerator.com/img/picture-generator/55e3d6414b50a414f1dc8460962e33791c3ad6e04e507440742a7ed1964bc6_640.jpg"
-      time="10 phút trước"
-      fuel="40"
-      speed="35"
-      state="Dừng"
-      /> */}
+      
     </Box>
   );
 };

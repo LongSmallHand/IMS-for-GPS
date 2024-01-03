@@ -1,5 +1,3 @@
-
-
 import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore'; 
 import { db } from '../../firebase';
 // import { getDownloadURL } from './storage';
@@ -8,11 +6,10 @@ import { db } from '../../firebase';
 const DEVICE_COLLECTION = 'devices';
 
 
-export const getDeviceFields = async (deviceKey, uid, setDevices) => {
-  const deviceRef = collection(db, DEVICE_COLLECTION, deviceKey, 'data');
-  const unsubscribe = onSnapshot(
-    query(deviceRef, where('uid', '==', uid), orderBy('id', 'desc')),
-    (snapshot) => {
+export const getDeviceFields2 = async (deviceKey, uid, setDevices) => {
+  const deviceRef = query(collection(db, DEVICE_COLLECTION), where("uid", "==", uid), orderBy("id", "desc"));
+
+  const unsubscribe = onSnapshot(deviceRef, async (snapshot) => {
     let fields = [];
     for (const documentSnapshot of snapshot.docs) {
       const device = documentSnapshot.data();
@@ -25,12 +22,13 @@ export const getDeviceFields = async (deviceKey, uid, setDevices) => {
         img: device.img,
         lat: device.lat,
         lng: device.lng,
-        speed: device.speed
+        speed: device.speed,
+        state: device.state,
+        time: device.t_v
       });
     }
     console.log("All devices: ", fields); // Log all the devices
     setDevices(fields);  // Update state with the fetched devices
-    console.log(fields)
   });
 
   return unsubscribe;  // Return the unsubscribe function for cleanup if needed

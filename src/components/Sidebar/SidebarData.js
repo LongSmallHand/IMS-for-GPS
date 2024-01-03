@@ -26,11 +26,11 @@ export const SidebarData = [
         path: '/user/info',
         icon: <BsIcons.BsFillPersonVcardFill />
       },
-      {
-        title: 'Quản lý xe',
-        path: '/user/vehicles',
-        icon: <BsIcons.BsCarFrontFill />
-      }
+      // {
+      //   title: 'Quản lý xe',
+      //   path: '/user/vehicles',
+      //   icon: <BsIcons.BsCarFrontFill />
+      // }
     ]
   },
   {
@@ -42,7 +42,7 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'AirBlade',
+        title: 'Phương tiện',
         path: '/user/car1',
         icon: <BsIcons.BsCarFrontFill />
       },
