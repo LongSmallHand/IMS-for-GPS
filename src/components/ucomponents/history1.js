@@ -58,10 +58,10 @@ const History1 = () => {
         setDevices(data); // Assuming getDeviceFields returns an array of devices
         setRows(data); // Set the rows based on the fetched data
       });
-      return () => {
-        // Cleanup function
-        unsubscribe();
-      };
+      // return () => {
+      //   // Cleanup function
+      //   unsubscribe();
+      // };
     }
   }, [authUser, newDeviceKey]);
 

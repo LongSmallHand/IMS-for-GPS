@@ -113,10 +113,10 @@ const handleClose = () => {
     if (authUser && newDeviceKey) {
       const unsubscribe = getDeviceFields2(newDeviceKey, authUser.uid, setDevices);
 
-      return () => {
-        // Cleanup function
-        unsubscribe();
-      };
+      // return () => {
+      //   // Cleanup function
+      //   unsubscribe();
+      // };
     }
   }, [authUser, newDeviceKey]);
 
