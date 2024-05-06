@@ -3,6 +3,8 @@ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Modal, Box, TextField, Button } from "@mui/material";
 import { useAuth } from '../pages/AuthContext';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
   const { authUser, isLoading } = useAuth();
@@ -10,6 +12,7 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
   const [devName, setDevName] = useState('');
   const [devNum, setDevNum] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [key, setKey] = useState('');
 
   // useEffect để lấy deviceKey từ Firestore nếu đã tồn tại
   useEffect(() => {
@@ -32,6 +35,22 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // if (!validator.isAlphanumeric(key)) {
+    //   alert('Key chỉ có thể chứa các ký tự chữ và số.');
+    //   return;
+    // }
+    if (!validator.isAlphanumeric(devName)) {
+      alert('Device name must contain only alphanumeric characters.');
+      return;
+    }
+  
+    if (!validator.isAlphanumeric(devNum)) {
+      alert('Device number must contain only alphanumeric characters.');
+      return;
+    }
+
+    // const hashedKey = await bcrypt.hash(key, 10);
 
     const deviceRef = doc(db, 'devices', deviceKey);
 
@@ -57,6 +76,7 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
       onDeviceKeySubmit(deviceKey);
     } catch (error) {
       console.error('Lỗi khi ghi dữ liệu:', error);
+      alert('Có lỗi xảy ra. Vui lòng thử lại.');
     }
 
     // Kiểm tra xem deviceKey đã tồn tại trong /users/uid chưa
@@ -110,7 +130,7 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
             margin="normal"
           />
           <TextField
-            label="Nhập số thiết bị"
+            label="Nhập số của thiết bị"
             value={devNum}
             onChange={(e) => setDevNum(e.target.value)}
             fullWidth
