@@ -3,6 +3,7 @@ import { tokens } from "./theme";
 import * as BsIcons from "react-icons/bs";
 import Header from "./header";
 import DeviceBoard from "./DeviceBoard";
+import GIS from "./GIS";
 import { useAuth } from "../pages/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -204,7 +205,7 @@ const handleClose = () => {
       
   {devices.map((device) => (
     
-  <DeviceBoard
+  <GIS
     id={device.id}
     devName={device.devName}
     devNum={device.devNum}

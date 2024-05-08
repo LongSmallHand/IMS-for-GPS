@@ -2,6 +2,7 @@ import {React, useEffect} from 'react';
 import { useAuth } from './AuthContext';
 import '../../App.css';
 import Map from '../Map/Map';
+import GoogleMap from '../Map/GoogleMap';
 import { productInputs, userInputs } from "./../ucomponents/formSource"
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
@@ -33,6 +34,7 @@ function User() {
       <div className='content'>
         <Routes>
           <Route path="/" element={<Map/>} />
+          {/* <Route path="/" element={<GoogleMap/>} /> */}
           <Route path='dashboard' element={<Dashboard/>}/>          
           <Route path='info' element={<Info inputs={userInputs} title="User Profile"/>}/>
           {/* <Route path='vehicles' element={<Vehicle/>}/> */}

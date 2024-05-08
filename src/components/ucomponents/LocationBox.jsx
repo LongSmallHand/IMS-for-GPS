@@ -64,10 +64,10 @@ const LocaBox = ({ devName, devNum, lat, lng, img, time, id, onUpdateLocation}) 
       <Box display="flex" justifyContent="space-around" alignItems="center" marginTop="2rem">
       <Box
         component="img"
-        sx={{ height: "120px", borderRadius: "1rem" }}
-        src={img}
+        // sx={{ height: "120px", borderRadius: "1rem" }}
+        // src={img}
         onClick={()=>{takeLocation()}}
-        title="Hình ảnh mới nhất từ thiết bị"
+        // title="Hình ảnh mới nhất từ thiết bị"
       />
       <Typography
         textAlign="left"

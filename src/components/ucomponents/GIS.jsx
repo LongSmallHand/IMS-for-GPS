@@ -8,8 +8,10 @@ import StatBox from "./StatBox";
 import LocaBox from "./LocationBox";
 import WeatherBox from "./WeatherBox";
 import { useState, useEffect } from "react";
+import Map from  "./../Map/Map";
+import { black } from "tripkit-react";
 
-const DeviceBoard = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id}) => {
+const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   var icon;
@@ -37,6 +39,7 @@ const updateLocationVal = (newLocationVal) => {
       devName,
       time,
     locationVal,
+      // Add other properties as needed
     };
     // console.log(newLocation)
 
@@ -54,28 +57,29 @@ useEffect(() => {
 
   return (
     <Box
-        gridTemplateColumns="repeat(12, 1fr)" gridAutoRows="140px"
+        gridTemplateColumns="repeat(8, 1fr)" gridAutoRows="200px"
         display="grid" gap="20px" marginBottom="20px"
     >
     {/* Device 1 */}
         <Box
             gridColumn="span 8" gridRow="span 3"
-            backgroundColor={colors.grey[900]}
+            backgroundColor={colors.greenAccent[500]}
             display="grid" gridTemplateColumns="repeat(8, 1fr)" gridAutoRows="140px"
-            gap="20px" borderRadius="30px"
+            gap="20px" borderRadius="20px"
         >
             <Box
-            marginTop="20px"
-            marginLeft="20px"
-            gridColumn="span 6"
-            gridRow="span 2"
+            marginTop="2px"
+            marginLeft="2px"
+            gridColumn="span 1"
+            gridRow="span 1"
             backgroundColor={colors.grey[1000]}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            borderRadius="30px"
+            borderRadius="20px"
+            borderColor={colors.black}
             >
-            <LocaBox
+            {/* <LocaBox
                 devName={devName}
                 devNum={devNum}
                 lat={lat}
@@ -87,17 +91,18 @@ useEffect(() => {
                     // Handle the location update as needed
                     updateLocationVal(newLocationVal);
                 }}
-            />
+            /> */}
             </Box>
             <Box
-            marginTop="20px" marginRight="20px"
-            gridColumn="span 2" gridRow="span 1"
+            marginTop="2px" marginRight="2px"
+            gridColumn="span 5" gridRow="span 2"
             backgroundColor={colors.grey[1000]}
             display="flex"
             justifyContent="space-between" alignItems="center"
-            borderRadius="30px"
+            borderRadius="20px"
             >
-            <StatBox
+            <Map lat={lat} lng={lng} id={id} />
+            {/* <StatBox
                 title="Nhiên liệu"
                 subtitle="(%)"
                 data={fuel}
@@ -107,17 +112,17 @@ useEffect(() => {
                 fontSize:"2rem", 
                 marginLeft:"0.25rem"
                 }}/>}
-            />
+            /> */}
             </Box>
             <Box
-            marginRight="20px"
+            marginTop="2px" marginRight="2px"
             gridColumn="span 2" gridRow="span 1"
             backgroundColor={colors.grey[1000]}
             display="flex"
             justifyContent="space-between" alignItems="center"
-            borderRadius="30px"
+            borderRadius="20px"
             >
-            <StatBox
+            {/* <StatBox
                 title="Tốc độ"
                 data={speed}
                 jc="space-evenly"
@@ -126,48 +131,64 @@ useEffect(() => {
                 fontSize:"2rem", 
                 marginLeft:"0.25rem"}}/>}
                 subtitle="(km/h)"
-            />
+            /> */}
             </Box>
             <Box
-            marginBottom="20px" marginLeft="20px"
-            gridColumn="span 6" gridRow="span 1"
+            marginBottom="2px" marginLeft="2px"
+            gridColumn="span 1" gridRow="span 2"
             backgroundColor={colors.grey[1000]}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            borderRadius="30px"
+            borderRadius="20px"
             >
-            <WeatherBox 
+            {/* <WeatherBox 
                 lat={lat}
                 lng={lng}
                 id={id}
-            />
+            /> */}
             </Box>
             <Box
-            marginBottom="20px" marginRight="20px"
-            gridColumn="span 2" gridRow="span 1"
+            marginBottom="2px" marginRight="2px"
+            gridColumn="span 2" gridRow="span 2"
             backgroundColor={colors.grey[1000]}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            borderRadius="30px"
+            borderRadius="20px"
             >
-            <StatBox
+            {/* <StatBox
                 title="Trạng thái"
                 jc="center"
                 icon={icon}
                 subtitle={state}
-            />
+            /> */}
+            </Box>
+            <Box
+            marginBottom="2px" marginRight="2px"
+            gridColumn="span 5" gridRow="span 1"
+            backgroundColor={colors.grey[1000]}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            borderRadius="20px"
+            >
+            {/* <StatBox
+                title="Top 10"
+                jc="center"
+                icon={icon}
+                subtitle={state}
+            /> */}
             </Box>
         </Box>
 
         <Box
             gridColumn="span 4"
             gridRow="span 3"
-            backgroundColor={colors.primary[400]}
+            backgroundColor={colors.redAccent[500]}
             overflow="auto"
         >
-            <Box
+        <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
@@ -212,4 +233,4 @@ useEffect(() => {
   );
 };
 
-export default DeviceBoard;
+export default GIS;

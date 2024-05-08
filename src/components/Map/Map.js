@@ -3,8 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from '
 import { Icon } from 'leaflet';
 import SearchField from './Search';
 import './Map.css'
-import { onValue, ref } from 'firebase/database';
-import { database } from '../../firebase';
+// import { onValue, ref } from 'firebase/database';
+// import { database } from '../../firebase';
 import * as BsIcons from "react-icons/bs";
 import { IoSpeedometer } from "react-icons/io5";
 import { getDeviceFields2 } from '../ucomponents/firestore2';
@@ -32,92 +32,21 @@ const initialMarkers = [
     time: "19:45:36",
   },
 ];
-var preMarkers = [
-  // {
-  //   geocode: [10.782190311067431, 106.62886950633379], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:45:36"
-  // },
-  // {
-  //   geocode: [10.782193143203493, 106.62903672235275], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:45:49"
-  // },
-  // {
-  //   geocode: [10.782125171930517, 106.62924718389387], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:51:34"
-  // },
-  // {
-  //   geocode: [10.782065697054042, 106.6293740374255], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:52:36"
-  // },
-  // {
-  //   geocode: [10.781969404371985, 106.62967963911535], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:52:53"
-  // },
-  // {
-  //   geocode: [10.78189860090964, 106.62985262120394], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:53:23"
-  // },
-  // {
-  //   geocode: [10.78187027952004, 106.62996505956154], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:56:24"
-  // },
-  // {
-  //   geocode: [10.781788147475108, 106.63025624607732], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:57:14"
-  // },
-  // {
-  //   geocode: [10.781604708374992, 106.6306756602561], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:58:36"
-  // },
-  // {
-  //   geocode: [10.781391752992894, 106.63142421267538], 
-  //   speed: 20,
-  //   fuel: 60,
-  //   date: "01/01/2024",
-  //   time: "19:58:36"
-  // },
-];
+var preMarkers = [];
 
-const multiPolyline = [
-  [10.782190311067431, 106.62886950633379], 
-  [10.782193143203493, 106.62903672235275], 
-  [10.782125171930517, 106.62924718389387], 
-  // [10.782065697054042, 106.6293740374255], 
-  // [10.781969404371985, 106.62967963911535], 
-  // [10.78189860090964, 106.62985262120394], 
-  // [10.78187027952004, 106.62996505956154], 
-  // [10.781788147475108, 106.63025624607732], 
-  // [10.781604708374992, 106.6306756602561], 
-  // [10.781391752992894, 106.63142421267538],
-  // [10.78108687588743, 106.63140527925799],
-]
+// const multiPolyline = [
+//   [10.782190311067431, 106.62886950633379], 
+//   [10.782193143203493, 106.62903672235275], 
+//   [10.782125171930517, 106.62924718389387], 
+//   // [10.782065697054042, 106.6293740374255], 
+//   // [10.781969404371985, 106.62967963911535], 
+//   // [10.78189860090964, 106.62985262120394], 
+//   // [10.78187027952004, 106.62996505956154], 
+//   // [10.781788147475108, 106.63025624607732], 
+//   // [10.781604708374992, 106.6306756602561], 
+//   // [10.781391752992894, 106.63142421267538],
+//   // [10.78108687588743, 106.63140527925799],
+// ]
 
 function LocationMarker() {
   const [position, setPosition] = useState(null)
@@ -140,8 +69,6 @@ function LocationMarker() {
 
 function splitToHms(input) {
   var h, m, s;
-  // input = input + 7000000;
-  // input = input.toString();
   if (input.length === 8) {
       h = input.slice(0, 2);
       m = input.slice(2, 4);
@@ -183,16 +110,6 @@ function Map() {
     fetchDeviceKey();
   }, [authUser]);
 
-  // useEffect(() => {
-  //   if (authUser && newDeviceKey) {
-  //     const unsubscribe = getDeviceFields2(newDeviceKey, authUser.uid, setDevices);
-  //     // console.log(setMarkers)
-  //     return () => {
-  //       // Cleanup function
-  //       unsubscribe();
-  //     };
-  //   }
-  // }, [authUser, newDeviceKey]);
 
   useEffect(() => {
     // const markersRef = ref(database, '/Data/Location');
@@ -225,7 +142,6 @@ function Map() {
       else {
         console.error("Firestore data is undefined or missing properties.");}
     });
-    // return () => {unsubscribe()}
   }, []);
 
   return (
@@ -264,12 +180,15 @@ function Map() {
                 <div style={{textAlign:"left", fontSize:"0.9rem"}}>
                   {newMarker.time}
                 </div>
+                <div style={{textAlign:"right", fontSize:"0.9rem"}}>
+                  Tốc độ dự kiến:
+                </div>
               </div>
               <div style={{
                 display:"flex", 
                 justifyContent:"space-between", 
                 alignItems:"center", 
-                backgroundColor:"lime", 
+                backgroundColor:"#228B22", 
                 height:"4rem", 
                 borderRadius:"10px"}}
               >
@@ -290,6 +209,10 @@ function Map() {
             </Popup>
           </Marker>
       ))}
+      {/* <RoutingMachine waypoints={[
+        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
+        // Add the coordinates of the clicked point here
+      ]} /> */}
     </MapContainer>
 
   );
