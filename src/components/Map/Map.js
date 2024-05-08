@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
+// import L from 'leaflet';
+// import { RoutingMachine } from 'react-leaflet-routing-machine'; // Import RoutingMachine
 import SearchField from './Search';
 import './Map.css'
+// import { onValue, ref } from 'firebase/database';
+// import { database } from '../../firebase';
 // import { onValue, ref } from 'firebase/database';
 // import { database } from '../../firebase';
 import * as BsIcons from "react-icons/bs";
@@ -32,6 +36,21 @@ const initialMarkers = [
     time: "19:45:36",
   },
 ];
+var preMarkers = [];
+
+// const multiPolyline = [
+//   [10.782190311067431, 106.62886950633379], 
+//   [10.782193143203493, 106.62903672235275], 
+//   [10.782125171930517, 106.62924718389387], 
+//   // [10.782065697054042, 106.6293740374255], 
+//   // [10.781969404371985, 106.62967963911535], 
+//   // [10.78189860090964, 106.62985262120394], 
+//   // [10.78187027952004, 106.62996505956154], 
+//   // [10.781788147475108, 106.63025624607732], 
+//   // [10.781604708374992, 106.6306756602561], 
+//   // [10.781391752992894, 106.63142421267538],
+//   // [10.78108687588743, 106.63140527925799],
+// ]
 var preMarkers = [];
 
 // const multiPolyline = [
@@ -189,6 +208,7 @@ function Map() {
                 justifyContent:"space-between", 
                 alignItems:"center", 
                 backgroundColor:"#228B22", 
+                backgroundColor:"#228B22", 
                 height:"4rem", 
                 borderRadius:"10px"}}
               >
@@ -209,6 +229,10 @@ function Map() {
             </Popup>
           </Marker>
       ))}
+      {/* <RoutingMachine waypoints={[
+        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
+        // Add the coordinates of the clicked point here
+      ]} /> */}
       {/* <RoutingMachine waypoints={[
         L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
         // Add the coordinates of the clicked point here
