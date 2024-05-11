@@ -160,8 +160,8 @@ const handleClose = () => {
 
   
   return (
-    <Box m="20px 20px 20px 240px" minWidth="900px">
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+    <Box m="20px 20px 20px 220px" minWidth="900px">
+      <Box display="flex" justifyContent="space-between" height="80px" alignItems="center">
         <Header title="Bảng điều khiển"/>
         <Box>
           <Button

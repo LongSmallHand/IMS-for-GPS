@@ -8,10 +8,10 @@ from tensorflow.keras.layers import Conv1D, MaxPooling1D
 # Assuming your data is in a DataFrame df and has been normalized
 # Convert 'Time' to a numerical format
 df = pd.read_csv("D:\DATN\IMS-for-GPS\src\components\AI//4.csv")
-df['Time'] = df['Time'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f').timestamp())
-print(df['Time'][0])
+# df['Time'] = df['Time'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f').timestamp())
+# print(df['Time'][0])
 # Split into input and output
-X = df[['Time', 'Latitude', 'Longitude', 'Altitude']].values
+X = df[['Latitude', 'Longitude', 'Altitude', 'Speed']].values
 print(X[0])
 y = df['Speed'].values
 
@@ -41,7 +41,7 @@ model.fit(X, y, epochs=2000, verbose=0)
 
 # demonstrate prediction
 # you need to provide your own new data here
-x_input = np.array([[1712226260.107, 10.7811855, 106.6322779, 6.300000190734863]])
+x_input = np.array([[10.7811855, 106.6322779, 6.300000190734863, 4.412963390350342]])
 # print(x_input.dtype)  # example data
 x_input = x_input.reshape((1, n_steps, n_features))
 # print(x_input.dtype)
@@ -49,4 +49,4 @@ yhat = model.predict(x_input, verbose=0)
 print("Predicted Speed:", yhat[0][0])
 print(yhat)
 
-model.save('my_model.keras')
+model.save('no_time_model.keras')

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import SearchField from './Search';
 import './Map.css'
 import * as BsIcons from "react-icons/bs";
 import { IoSpeedometer } from "react-icons/io5";
@@ -9,13 +8,7 @@ import { getDeviceFields2 } from '../ucomponents/firestore2';
 import { doc, setDoc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from "../pages/AuthContext";
-import styled from "styled-components"
 
-const MyMap = styled(MapContainer)`
-  margin-left: 200px;
-  height: 100vh;
-  z-index: 0;
-`
 const limeOptions = { color: 'lime' }
 const customIcon = new Icon ({
   iconUrl: "image/car.png", 
@@ -25,7 +18,6 @@ const dotIcon = new Icon ({
   iconUrl: "image/yellowdot.png",
   iconSize: [30,30]
 })
-
 
 // Example markers
 const initialMarkers = [
@@ -37,35 +29,6 @@ const initialMarkers = [
   },
 ];
 var preMarkers = [];
-
-// const multiPolyline = [
-//   [10.782190311067431, 106.62886950633379], 
-//   [10.782193143203493, 106.62903672235275], 
-//   [10.782125171930517, 106.62924718389387], 
-//   // [10.782065697054042, 106.6293740374255], 
-//   // [10.781969404371985, 106.62967963911535], 
-//   // [10.78189860090964, 106.62985262120394], 
-//   // [10.78187027952004, 106.62996505956154], 
-//   // [10.781788147475108, 106.63025624607732], 
-//   // [10.781604708374992, 106.6306756602561], 
-//   // [10.781391752992894, 106.63142421267538],
-//   // [10.78108687588743, 106.63140527925799],
-// ]
-var preMarkers = [];
-
-// const multiPolyline = [
-//   [10.782190311067431, 106.62886950633379], 
-//   [10.782193143203493, 106.62903672235275], 
-//   [10.782125171930517, 106.62924718389387], 
-//   // [10.782065697054042, 106.6293740374255], 
-//   // [10.781969404371985, 106.62967963911535], 
-//   // [10.78189860090964, 106.62985262120394], 
-//   // [10.78187027952004, 106.62996505956154], 
-//   // [10.781788147475108, 106.63025624607732], 
-//   // [10.781604708374992, 106.6306756602561], 
-//   // [10.781391752992894, 106.63142421267538],
-//   // [10.78108687588743, 106.63140527925799],
-// ]
 
 function LocationMarker() {
   const [position, setPosition] = useState(null)
@@ -101,7 +64,7 @@ function splitToHms(input) {
   return h + "h" + m + "m";
 }
 
-function Map() {
+function MiniMap() {
   const { authUser, isLoading } = useAuth();
   const [markers, setMarkers] = useState(initialMarkers);
   const [devices, setDevices] = useState([]);
@@ -165,9 +128,8 @@ function Map() {
 
   return (
 
-    <MyMap center={[10.762622, 106.660172]} zoom={17} scrollWheelZoom={true}>
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={22}/>
-      <SearchField/>
+    <MapContainer center={[10.763622, 106.640172]} zoom={15} scrollWheelZoom={false}>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={18}/>
       <LocationMarker/>
 
       {preMarkers.map((marker) => (
@@ -191,11 +153,8 @@ function Map() {
             closeButton = {false}
             keepInView = {false}
             >
-            <div style={{display:"grid", width:"9rem"}}>
+            <div style={{display:"grid", width:"5rem"}}>
               <div style={{display:"flex", justifyContent:"space-between"}}>
-                {/* <div style={{textAlign:"right", fontSize:"0.9rem"}}>
-                  {newMarker.date}
-                </div> */}
                 <div style={{textAlign:"left", fontSize:"0.9rem"}}>
                   {newMarker.time}
                 </div>
@@ -229,17 +188,9 @@ function Map() {
             </Popup>
           </Marker>
       ))}
-      {/* <RoutingMachine waypoints={[
-        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
-        // Add the coordinates of the clicked point here
-      ]} /> */}
-      {/* <RoutingMachine waypoints={[
-        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
-        // Add the coordinates of the clicked point here
-      ]} /> */}
-    </MyMap>
+    </MapContainer>
 
   );
 }
 
-export default Map;
+export default MiniMap;
