@@ -7,7 +7,7 @@ from keras.models import load_model
 app = Flask(__name__)
 
 # Load your pre-trained model
-model = load_model("D:\DATN\IMS-for-GPS//no_time_model.keras")
+model = load_model("D:\DATN\IMS-for-GPS//lstm_model.keras")
 
 # Assuming your data is in a DataFrame df and has been normalized
 # Convert 'Time' to a numerical format

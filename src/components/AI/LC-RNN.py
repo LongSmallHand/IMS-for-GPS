@@ -1,29 +1,49 @@
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.layers import LSTM, Dense, Input, Concatenate
-from tensorflow.keras.models import Model
+import pandas as pd
+from keras.models import Sequential
+from keras.layers import LSTM, Dense, Conv1D, MaxPooling1D, TimeDistributed, Flatten
 
-# Generate synthetic data (replace with your real data)
-# X_speed: historical speed sequences, X_loc: location features
-X_speed = np.random.rand(100, 10, 1)  # (samples, timesteps, features)
-X_loc = np.random.rand(100, 2)  # (samples, location_features)
-y_speed = np.random.rand(100, 1)  # (samples, target)
+# Đọc dữ liệu từ file CSV
+df = pd.read_csv("D:\DATN\IMS-for-GPS\src\components\AI//4.csv")
 
-# Build LC-RNN model
-input_speed = Input(shape=(10, 1))
-input_loc = Input(shape=(2,))
-concatenated = Concatenate()([input_speed, input_loc])
-rnn_output = LSTM(64)(concatenated)
-output = Dense(1)(rnn_output)
+# Chia dữ liệu thành input (X) và output (y)
+X = df[['Latitude', 'Longitude', 'Altitude', 'Speed']].values
+y = df['Speed'].values
 
-model = Model(inputs=[input_speed, input_loc], outputs=output)
-model.compile(optimizer='adam', loss='mean_squared_error')
+# Số bước thời gian bạn muốn sử dụng
+n_steps = 3
 
-# Train the model
-model.fit([X_speed, X_loc], y_speed, epochs=10, batch_size=32, validation_split=0.2)
+# Tạo dữ liệu với các bước thời gian
+def create_sequences(data, n_steps):
+    X, y = [], []
+    for i in range(len(data) - n_steps):
+        X.append(data[i:i+n_steps])
+        y.append(data[i + n_steps][3])  # Dùng 'Speed' làm giá trị đầu ra
+    return np.array(X), np.array(y)
 
-# Make predictions
-new_speed_seq = np.random.rand(1, 10, 1)
-new_loc = np.random.rand(1, 2)
-predicted_speed = model.predict([new_speed_seq, new_loc])
-print("Predicted speed:", predicted_speed[0][0])
+# Chuẩn bị dữ liệu
+X, y = create_sequences(X, n_steps)
+
+# Cập nhật kích thước đầu vào cho mô hình
+n_features = X.shape[2]  # Số đặc trưng trong dữ liệu của bạn
+
+# Xây dựng lại mô hình với kích thước đầu vào cập nhật
+model = Sequential()
+model.add(TimeDistributed(Conv1D(filters=64, kernel_size=1, activation='relu'), input_shape=(n_steps, n_features, 1)))
+model.add(TimeDistributed(MaxPooling1D(pool_size=1)))
+model.add(TimeDistributed(Flatten()))
+model.add(LSTM(50, activation='relu'))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')
+
+# Huấn luyện mô hình
+model.fit(X, y, epochs=200, verbose=0)
+
+# Lưu mô hình
+model.save('lc_rnn_speed_model.keras')
+
+# Dự đoán tốc độ với dữ liệu mới (thay thế bằng dữ liệu của bạn)
+x_input = np.array([[10.7811855, 106.6322779, 6.300000190734863, 4.412963390350342]])
+x_input = np.repeat(x_input, n_steps, axis=0).reshape((1, n_steps, n_features, 1))
+yhat = model.predict(x_input, verbose=0)
+print("Tốc độ dự đoán:", yhat[0][0])

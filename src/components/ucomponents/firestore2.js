@@ -17,14 +17,14 @@ export const getDeviceFields2 = async (deviceKey, uid, setDevices) => {
       fields.push({
         devName: device.devName,
         devNum: device.devNum,
-        fuel: device.fuel,
         id: device.id,
-        img: device.img,
+        // img: device.img,
         lat: device.lat,
         lng: device.lng,
         speed: device.speed,
         state: device.state,
-        time: device.t_v
+        time: device.t_v,
+        distance: device.total_distance
       });
     }
     console.log("All devices: ", fields); // Log all the devices

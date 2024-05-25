@@ -161,13 +161,13 @@ const handleClose = () => {
   
   return (
     <Box m="20px 20px 20px 220px" minWidth="900px">
-      <Box display="flex" justifyContent="space-between" height="80px" alignItems="center">
+      <Box display="flex" justifyContent="space-between" height="40px" alignItems="center">
         <Header title="Bảng điều khiển"/>
         <Box>
           <Button
             sx={{
-              backgroundColor: colors.redAccent[700],
-              color: colors.grey[100],
+              backgroundColor: "black",
+              color: "white",
               fontSize: "1rem",
               fontWeight: "normal",
               margin: "0 1rem 30px 0",

@@ -142,20 +142,20 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            {/* <Item
+            <Item
               title="Quản lý thiết bị"
               to="/admin/device"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            /> */}
-            {/* <Item
+            />
+            <Item
               title="Thu nhập"
               to="/admin/invoices"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            /> */}
+            />
 
             <Typography
               variant="h6"

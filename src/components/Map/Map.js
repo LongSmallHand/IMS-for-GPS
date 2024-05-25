@@ -196,11 +196,8 @@ function Map() {
                 {/* <div style={{textAlign:"right", fontSize:"0.9rem"}}>
                   {newMarker.date}
                 </div> */}
-                <div style={{textAlign:"left", fontSize:"0.9rem"}}>
-                  {newMarker.time}
-                </div>
-                <div style={{textAlign:"right", fontSize:"0.9rem"}}>
-                  Tốc độ dự kiến:
+                <div style={{textAlign:"center", fontSize:"1rem", fontWeight: "bold"}}>
+                  Truck1
                 </div>
               </div>
               <div style={{
