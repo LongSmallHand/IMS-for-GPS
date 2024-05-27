@@ -33,7 +33,7 @@ function Admin() {
               <Route path='form' element={<Form/>}/>
               <Route path='line' element={<Line/>}/>
               <Route path='faq' element={<FAQ/>}/>
-              <Route path="calendar" element={<Calendar />} />
+              {/* <Route path="calendar" element={<Calendar />} /> */}
               <Route path="geography" element={<Geography />} />
             </Routes>
           </main>

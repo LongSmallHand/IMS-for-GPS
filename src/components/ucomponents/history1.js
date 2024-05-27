@@ -1,12 +1,15 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from './theme';
 import Header from "./header";
-import { his1 } from "../../data/vehicleHistory1";
 import { useEffect, useState } from "react";
 import { getDeviceFields } from "./firestore";
 import { useAuth } from "../pages/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import * as XLSX from 'xlsx'; 
+
 
 const History1 = () => {
   const { authUser, isLoading } = useAuth();
@@ -14,56 +17,79 @@ const History1 = () => {
   const colors = tokens(theme.palette.mode);
   const router = useNavigate();
 
-
   const [rows, setRows] = useState([]);
+  const [devices, setDevices] = useState([]);
+  // const [locationsData, setLocationsData] = useState([]);
+  const [newDeviceKey, setNewDeviceKey] = useState("");
+  // const [showDeviceForm, setShowDeviceForm] = useState(false);
+  // const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !authUser) {
       router.push('/');
     }
-  }, [authUser, isLoading])
+  }, [authUser, isLoading]);
+
 
   useEffect(() => {
-    if (authUser) {
-      // Lấy dữ liệu từ Cloud Firestore
-      const unsubscribe = getDeviceFields(authUser.uid, (newData) => {
-        // Khi có dữ liệu mới, cập nhật danh sách dòng
-        setRows((prevRows) => [...prevRows, newData]);
-      });
+    const fetchDeviceKey = async () => {
+      if (authUser) {
+        const userRef = doc(db, 'users', authUser.uid);
+        const userDoc = await getDoc(userRef);
 
-      // Hủy đăng ký lắng nghe khi component unmount
-      return () => unsubscribe();
-    }
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.deviceKey) {
+            setNewDeviceKey(userData.deviceKey);
+            console.log("DeviceKey: " + userData.deviceKey)
+          }
+        }
+      }
+    };
+
+    fetchDeviceKey();
   }, [authUser]);
 
-  
+
+  useEffect(() => {
+    if (authUser && newDeviceKey) {
+      const unsubscribe = getDeviceFields(newDeviceKey, authUser.uid, (data) => {
+        console.log(data)
+        setDevices(data); // Assuming getDeviceFields returns an array of devices
+        setRows(data); // Set the rows based on the fetched data
+      });
+      // return () => {
+      //   // Cleanup function
+      //   unsubscribe();
+      // };
+    }
+  }, [authUser, newDeviceKey]);
+
   const columns = [
     {
       field: "id", 
       headerName: "ID",
-      width: 50
+      width: 70
     },
+    // {
+    //   field: "date",
+    //   headerName: "Ngày",
+    //   type: "Date",
+    //   width: 120
+    // },
     {
-      
-      field: "date",
-      headerName: "Ngày",
-      type: "Date",
-      width: 120
-    },
-    {
-      
-      field: "time",
+      field: "t_v",
       headerName: "Thời Gian",
-      type: "time",
-      width: 90
+      type: "text",
+      width: 150
     },
     {
-      field: "temp",
-      headerName: "Nhiệt độ",
-      type: "number",
+      field: "devName",
+      headerName: "Phương tiện",
+      type: "text",
       headerAlign: "center",
       align: "center",
-      width: 90
+      width: 200
     },
     {
       field: "speed",
@@ -74,11 +100,12 @@ const History1 = () => {
       width: 90
     },
     {
-      field: "door",
-      headerName: "Trạng thái",
-      type: "boolean",
+      field: "devNum",
+      headerName: "Biển sổ",
+      type: "text",
       headerAlign: "center",
-      width: 90,
+      align: "center",
+      width: 150,
     },
     {
       field: "fuel",
@@ -88,19 +115,51 @@ const History1 = () => {
       align: "center",
       width: 90
     },
-    {
-      field: "pos",
-      headerName: "Vị trí",
-      flex: 1,
-      width: 120
-    },
+    // {
+    //   field: "pos",
+    //   headerName: "Vị trí",
+    //   flex: 1,
+    //   width: 120
+    // },
   ];
 
+  const handleDownload = () => {
+    const data = [
+      ['Phương tiện', 'Biển số', 'Nhiên liệu', 'Tốc độ', 'Thời gian'],
+      ...rows.map(row => [row.devName, row.devNum, row.fuel, row.speed, row.t_v])
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Dữ liệu');
+
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+    const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+
+    a.download = 'Report.xlsx';
+
+    a.click();
+
+    URL.revokeObjectURL(a.href);
+  };
+
+  // Helper function to convert string to ArrayBuffer
+  function s2ab(s) {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
 
   return (
     <>
       <Box m="20px 20px 20px 240px">
-        <Header title="Dữ liệu AirBlade"/>
+        <Header title="Lịch sử dữ liệu phương tiện"/>
         <Box
           m="40px 0 0 0"
           height="100%"
@@ -132,9 +191,24 @@ const History1 = () => {
             },
           }}
         >
-          {rows.map((row) => (
-          <DataGrid checkboxSelection rows={his1} columns={columns} />
-          ))}
+          <Button
+            sx={{
+              backgroundColor: colors.blueAccent[700],
+              color: colors.grey[100],
+              fontSize: "1rem",
+              fontWeight: "normal",
+              margin: "0 0 30px 0",
+              padding: "10px 20px",
+            }}
+            onClick={handleDownload}
+          >
+            Tải xuống
+          </Button>
+
+          <DataGrid 
+          checkboxSelection 
+          rows={rows} 
+          columns={columns} />
         </Box>
       </Box>
     </>

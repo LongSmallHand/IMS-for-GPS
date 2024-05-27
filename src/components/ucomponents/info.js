@@ -1,128 +1,157 @@
-import React from 'react';
+import './info.scss';
+import { useEffect, useState } from "react";
 import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage
-} from 'mdb-react-ui-kit';
-import "mdb-react-ui-kit/dist/css/mdb.min.css";
-import { Button, useTheme } from "@mui/material";
-import { tokens } from "./theme";
-import { personalData } from '../../data/personalData';
-import Header from './header';
-import * as BsIcons from "react-icons/bs";
+    getDoc,
+    doc,
+    serverTimestamp,
+    setDoc,
+  } from "firebase/firestore";
 
-const data = personalData;
-export default function Info() {
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
+import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
+import { auth, db, storage } from '../../firebase';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from '../pages/AuthContext';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
-//     const [isEditing, setIsEditing] = useState(false);
+// ... (other imports)
 
-//   const handleEditClick = () => {
-//     setIsEditing(true);
-//   };
-
-//   const handleCancelEdit = () => {
-//     setIsEditing(false);
-//   };
-  
-  return (
-    <>
-    <MDBRow style={{width: 'max-content'}}>
-        <section style={{margin: '0 0 0 200px', backgroundColor: 'white'}}>
-        <MDBContainer className="py-4" style ={{margin: '0 0 0 0', padding:'0 0 0 50px'}}>
-            <MDBRow style={{width: '100%'}}>
-            <MDBCol lg="8"><Header title = "Thông tin cá nhân"/></MDBCol>
-            <MDBCol lg="4">
-                <Button
-                    sx={{
-                    backgroundColor: colors.blueAccent[700],
-                    color: colors.grey[100],
-                    fontSize: "20px",
-                    fontWeight: "normal",
-                    margin: "15px 20px",
-                    padding: "10px 40px",
-                    }}
-                >
-                    <BsIcons.BsTools style={{ margin: "0 10px 0 0"}} />
-                    Chỉnh sửa
-                </Button>
-            </MDBCol>
-            </MDBRow>
-            <MDBRow>
-            <MDBCol lg="4">
-                <MDBCard className="mb-4">
-                <MDBCardBody className="text-center">
-                    <MDBCardImage
-                    src= {data[0].url} 
-                    alt="avatar"
-                    style={{ 
-                        margin: '20px 0',
-                        "border-radius": '50%',
-                        "maxHeight": '150px',
-                        "maxWidth" : '150px',
-                        "clipPath" : 'circle()'
-                        }}
-                    fluid />
-                    <p className="text-muted mb-1">{data[0].username}</p>
-                    <div className="d-flex justify-content-center mb-2">
-                    </div>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-
-            <MDBCol lg="7">
-                <MDBCard className="mb-4">
-                <MDBCardBody>
-                    <MDBRow>
-                    <MDBCol sm="3">
-                        <MDBCardText>Họ và tên</MDBCardText>
-                    </MDBCol>
-                    <MDBCol sm="8">
-                        <MDBCardText className="text-muted">{data[0].name}</MDBCardText>
-                    </MDBCol>
-                    </MDBRow>
-                    <hr />
-                    <MDBRow>
-                    <MDBCol sm="3">
-                        <MDBCardText>Email</MDBCardText>
-                    </MDBCol>
-                    <MDBCol sm="8">
-                        <MDBCardText className="text-muted">{data[0].email}</MDBCardText>
-                    </MDBCol>
-                    </MDBRow>
-                    <hr />
-                    <MDBRow>
-                    <MDBCol sm="3">
-                        <MDBCardText>Số điện thoại</MDBCardText>
-                    </MDBCol>
-                    <MDBCol sm="8">
-                        <MDBCardText className="text-muted">{data[0].phone}</MDBCardText>
-                    </MDBCol>
-                    </MDBRow>
-                    <hr />
-                    <MDBRow>
-                    <MDBCol sm="3">
-                        <MDBCardText>Địa chỉ</MDBCardText>
-                    </MDBCol>
-                    <MDBCol sm="8">
-                        <MDBCardText className="text-muted">{data[0].address}</MDBCardText>
-                    </MDBCol>
-                    </MDBRow>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            </MDBRow>
-        </MDBContainer>
-        </section>
-    </MDBRow>
-    </>
+const Info = ({ inputs, title }) => {
+  const { authUser, isLoading } = useAuth();
+  const [file, setFile] = useState("");
+  const [data, setData] = useState({});
+  const [per, setPerc] = useState(null);
+  const [imageURL, setImageURL] = useState(
+    "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
   );
-}
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", authUser.uid));
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setData(userData);
+          console.log(userData)
+        }
+      } catch (error) {
+        console.error("Error checking user data:", error);
+      }
+    };
+
+    checkUserData();
+  }, [authUser.uid]);
+
+  useEffect(() => {
+    const uploadFile = async () => {
+      const name = new Date().getTime() + file.name;
+
+      const storageRef = ref(storage, name);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setPerc(progress);
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setData((prev) => ({ ...prev, img: downloadURL }));
+            setImageURL(downloadURL);
+          } catch (error) {
+            console.error("Error getting download URL:", error);
+          }
+        }
+      );
+    };
+
+    if (file) {
+      uploadFile();
+    }
+  }, [file]);
+
+  const handleInput = (e) => {
+    const id = e.target.id;
+    const value = e.target.value;
+
+    setData({ ...data, [id]: value });
+  };
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, "users", authUser.uid), {
+        ...data,
+        timeStamp: serverTimestamp(),
+      });
+      console.log(data)
+      navigate("/user");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <div className="new">
+      <div className="newContainer">
+        <div className="top">
+          <h1>{title}</h1>
+        </div>
+        <div className="bottom">
+          <div className="left">
+          {data.img ? (
+              <img src={data.img} alt="" />
+            ) : (
+              <img src={imageURL} alt="" />
+            )}
+          </div>
+          <div className="right">
+            <form onSubmit={handleAdd}>
+              <div className="formInput">
+                <label htmlFor="file">
+                  Change avatar: <DriveFolderUploadOutlinedIcon className="icon" />
+                </label>
+                <input
+                  type="file"
+                  id="file"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              {inputs &&
+                inputs.map((input) => (
+                  <div className="formInput" key={input.id}>
+                    <label>{input.label}</label>
+                      <input
+                        id={input.id}
+                        type={input.type}
+                        placeholder={input.placeholder}
+                        onChange={handleInput}
+                        value={data[input.id] || ""}
+                      />
+                  </div>
+                ))}
+              <button disabled={per !== null && per < 100} type="submit">
+                Send
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Info;
 
 
 

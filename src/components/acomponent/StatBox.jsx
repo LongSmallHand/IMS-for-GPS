@@ -32,9 +32,9 @@ const StatBox = ({ title, subtitle, icon, increase, progress, progress_1, isProg
                 <Typography variant="h6" sx={{color:"lightgreen"}}>
                 Người dùng mới {progress_1*100}%
                 </Typography>
-                <Typography variant="h6" sx={{color:"khaki"}}>
+                {/* <Typography variant="h6" sx={{color:"khaki"}}>
                 Khác
-                </Typography>
+                </Typography> */}
               </Box>
               <ProgressCircle progress={progress} progress_1={progress_1} />
             </Box>
