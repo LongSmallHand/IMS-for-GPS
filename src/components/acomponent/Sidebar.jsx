@@ -135,13 +135,13 @@ const Sidebar = () => {
             >
               Dữ liệu
             </Typography>
-            <Item
+            {/* <Item
               title="Quản lý thành viên"
               to="/admin/team"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Item
               title="Quản lý thiết bị"
               to="/admin/device"

@@ -8,28 +8,13 @@ import { doc, getDoc, onSnapshot, query, collection, where } from 'firebase/fire
 import { db } from '../../firebase';
 import { useAuth } from "../pages/AuthContext";
 
-const limeOptions = { color: 'lime' }
 const customIcon = new Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/3721/3721600.png",
   iconSize: [40, 40]
 });
-const dotIcon = new Icon({
-  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7c/GAudit_YellowDot.png",
-  iconSize: [10, 10]
-});
-
-// Example markers
-const initialMarkers = [
-  {
-    geocode: [10, 100],
-    speed: 20,
-    fuel: 60,
-    time: "19:45:36",
-  },
-];
 
 function LocationMarker() {
-  const [position, setPosition] = useState(null)
+  const [position, setPosition] = useState(null);
   const map = useMapEvents({
     click() {
       map.locate();
@@ -47,19 +32,11 @@ function LocationMarker() {
   );
 };
 
-const splitToHms = (input) => {
-  let h, m, s;
-  if (input.length === 8) {
-    h = input.slice(0, 2);
-    m = input.slice(2, 4);
-    s = input.slice(4, 6);
-  } else {
-    h = input.slice(0, 1);
-    m = input.slice(1, 3);
-    s = input.slice(3, 5);
-  }
-
-  return h + "h" + m + "m";
+const formatTime = (datetime) => {
+  const date = new Date(datetime);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
 }
 
 function CenterMap({ markers }) {
@@ -75,13 +52,18 @@ function CenterMap({ markers }) {
   return null;
 }
 
+const convertSpeedToKmh = (speedInMs) => {
+  return (speedInMs * 3.6).toFixed(2);
+}
+
 function MiniMap() {
-  const { authUser, isLoading } = useAuth();
-  const [markers, setMarkers] = useState(initialMarkers);
-  const [openPopupId, setOpenPopupId] = useState(null); // State to manage open popup
+  const { authUser } = useAuth();
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
     const fetchDeviceKey = async () => {
+      if (!authUser) return;
+      
       const userRef = doc(db, 'users', authUser.uid);
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
@@ -100,26 +82,20 @@ function MiniMap() {
 
     const devicesQuery = query(collection(db, "devices"), where("uid", "==", authUser.uid));
     const unsub = onSnapshot(devicesQuery, (snapshot) => {
-      let newMarkers = [];
-
-      snapshot.docs.forEach((doc) => {
+      const newMarkers = snapshot.docs.map(doc => {
         const device = doc.data();
-        if (device) {
-          const newMarker = {
-            devName: device.devName,
-            devNum: device.devNum,
-            id: device.id,
-            lat: device.lat,
-            lng: device.lng,
-            speed: device.speed,
-            state: device.state,
-            time: device.t_v,
-            distance: device.total_distance,
-            geocode: [device.lat, device.lng]
-          };
-          newMarkers.push(newMarker);
-          console.log(newMarkers);
-        }
+        return {
+          devName: device.devName,
+          devNum: device.devNum,
+          id: device.id,
+          lat: device.lat,
+          lng: device.lng,
+          speed: device.speed,
+          state: device.state,
+          time: device.t_v,
+          distance: device.total_distance,
+          geocode: [device.lat, device.lng]
+        };
       });
 
       setMarkers(newMarkers);
@@ -139,31 +115,23 @@ function MiniMap() {
           key={index} 
           position={marker.geocode} 
           icon={customIcon} 
-          zIndexOffset={1}
-          eventHandlers={{
-            click: () => setOpenPopupId(marker.id), // Open the specific popup
-          }}
         >
-          <Popup style={{ borderRadius: "70px" }}
-  autoClose={false}
-  closeButton={false}
-  keepInView={true}
->
-<div style={{ display: "flex", alignItems: "center", backgroundColor: "black", color: "green", borderRadius: "10px", padding: "10px" }}>
-  <div style={{ flex: 1, textAlign: "center" }}>
-    <span style={{ fontWeight: "bold", color:"white", fontSize: "1rem" }}>{marker.devName}</span>
-    <br />
-    <span style={{ color: "red" }}>{marker.speed} km/h</span>
-  </div>
-  <div style={{ flex: 1, textAlign: "center", marginLeft: "5px" }}>
-    <BsFillStopwatchFill style={{ fontSize: "1rem", color: "red" }} />
-    <br />
-    <span style={{ fontSize: "0.8rem" }}>{splitToHms(marker.time)}</span>
-  </div>
-</div>
-
-</Popup>
-
+          <Popup>
+            <div style={{ display: "flex", alignItems: "center", backgroundColor: "black", color: "green", borderRadius: "10px", padding: "10px" }}>
+              <div style={{ flex: 1, textAlign: "center" }}>
+                <span style={{ fontWeight: "bold", color: "white", fontSize: "1rem" }}>{marker.devName}</span>
+                <br />
+                <span style={{ color: "red" }}>{convertSpeedToKmh(marker.speed)} km/h</span>
+              </div>
+              {marker.speed === 0 && (
+                <div style={{ flex: 1, textAlign: "center", marginLeft: "5px" }}>
+                  <BsFillStopwatchFill style={{ fontSize: "1rem", color: "red" }} />
+                  <br />
+                  <span style={{ fontSize: "0.8rem" }}>{formatTime(marker.time)}</span>
+                </div>
+              )}
+            </div>
+          </Popup>
         </Marker>
       ))}
     </MapContainer>

@@ -99,11 +99,6 @@ const handleClose = () => {
     return h + "h" + m + "m";
   }
 
-  
-
-
-
-
   useEffect(() => {
     if (!isLoading && !authUser) {
       router.push('/');
@@ -176,7 +171,7 @@ const handleClose = () => {
             onClick={handleClick}
           >
             <BsIcons.BsCartPlusFill style={{ margin: "0 10px 0 0"}} />
-            Thêm thiết bị
+            Thêm/Xoá thiết bị
           </Button>
           {isFormOpen && (
       <div>
@@ -211,9 +206,7 @@ const handleClose = () => {
     devNum={device.devNum}
     lat={device.lat}
     lng={device.lng}
-    img={img}
-    time= {device.time}// Update thời gian chụp hình gần nhất
-    fuel={device.fuel}
+    time= {device.t_v}// Update thời gian chụp hình gần nhất
     speed={device.speed}
     state={device.state} // set = "Đang đỗ" nếu speed < 2km/h
     onLocationUpdate={handleLocationUpdate}

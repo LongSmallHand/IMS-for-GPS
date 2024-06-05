@@ -139,6 +139,7 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
           <Button type="submit" variant="contained" color="primary">
             Kết nối
           </Button>
+          
         </form>
       </Box>
     </Modal>

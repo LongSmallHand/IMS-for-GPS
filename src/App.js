@@ -56,7 +56,7 @@ function App() {
             <Route path='support'/>
           </Route>
           <Route path='/admin/*' element={<Admin/>}>
-            <Route path='team'/>          
+            {/* <Route path='team'/>           */}
             <Route path='device'/>
             <Route path='invoices'/>
             <Route path='form'/>

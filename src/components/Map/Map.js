@@ -5,7 +5,6 @@ import SearchField from './Search';
 import './Map.css'
 import * as BsIcons from "react-icons/bs";
 import { IoSpeedometer } from "react-icons/io5";
-import { getDeviceFields2 } from '../ucomponents/firestore2';
 import { doc, setDoc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from "../pages/AuthContext";
@@ -17,6 +16,7 @@ const MyMap = styled(MapContainer)`
   z-index: 0;
 `
 const limeOptions = { color: 'lime' }
+const redOptions = { color: 'red' }
 const customIcon = new Icon ({
   iconUrl: "image/car.png", 
   iconSize: [40, 40]
@@ -37,6 +37,7 @@ const initialMarkers = [
   },
 ];
 var preMarkers = [];
+var preMarkers2 = [];
 
 // const multiPolyline = [
 //   [10.782190311067431, 106.62886950633379], 
@@ -104,8 +105,10 @@ function splitToHms(input) {
 function Map() {
   const { authUser, isLoading } = useAuth();
   const [markers, setMarkers] = useState(initialMarkers);
+  const [markers2, setMarkers2] = useState(initialMarkers);
   const [devices, setDevices] = useState([]);
   const [multiPolyline, setMultiPolyline] = useState([]);
+  const [multiPolyline2, setMultiPolyline2] = useState([]);
   const [newDeviceKey, setNewDeviceKey] = useState("");
 
   const initMarker = ref => { if (ref) { ref.openPopup() }};
@@ -143,19 +146,37 @@ function Map() {
           fuel: data.fuel,
           time: data.t_v
         };
+        const newMarker2 = {
+          geocode: [data.box_lat, data.box_lng],
+          speed: data.box_spd,
+          fuel: data.fuel,
+          time: data.t_v
+        };
         setMarkers((prevMarkers) => [newMarker]);
+        setMarkers2((prevMarkers2) => [newMarker2]);
         // Create a new polyline whenever a new array is added
-        setMultiPolyline((prevPolyline) => [...prevPolyline, newMarker.geocode]);
+        setMultiPolyline((prevPolyline) => [...prevPolyline, newMarker.geocode]);http://localhost:3000/user/car1
+        setMultiPolyline2((prevPolyline2) => [...prevPolyline2, newMarker2.geocode]);
         console.log(newMarker)
-        console.log(newMarker.geocode[0], newMarker.geocode[1], newMarker.speed, newMarker.fuel, newMarker.time);
+        console.log(newMarker2)
+        // console.log(newMarker.geocode[0], newMarker.geocode[1], newMarker.speed, newMarker.fuel, newMarker.time);
         let flag0 = newMarker;
         var flag1;
+        let flag2 = newMarker2;
+        var flag3;
         if(flag0 !== flag1){
           flag1 = flag0;
           preMarkers.push(newMarker);
           // console.log(preMarkers)
           multiPolyline.push(newMarker.geocode);
           console.log(multiPolyline)
+        }
+        if(flag2 !== flag3){
+          flag3 = flag2;
+          preMarkers2.push(newMarker2);
+          // console.log(preMarkers)
+          multiPolyline2.push(newMarker2.geocode);
+          console.log(multiPolyline2)
         }
       }
       else {
@@ -181,59 +202,29 @@ function Map() {
             </Popup>
           </Marker>
       ))}
-      
-      <Polyline pathOptions = {limeOptions} positions={multiPolyline}/>
-
-      {markers.map((newMarker) => (
-          <Marker ref={initMarker} position={newMarker.geocode} icon={customIcon} zIndexOffset={1}>
+      {preMarkers2.map((marker) => (
+          <Marker position={marker.geocode} icon={dotIcon}>
             <Popup
-            autoClose = {false}
             closeButton = {false}
-            keepInView = {false}
             >
-            <div style={{display:"grid", width:"9rem"}}>
-              <div style={{display:"flex", justifyContent:"space-between"}}>
-                {/* <div style={{textAlign:"right", fontSize:"0.9rem"}}>
-                  {newMarker.date}
-                </div> */}
-                <div style={{textAlign:"center", fontSize:"1rem", fontWeight: "bold"}}>
-                  Truck1
-                </div>
-              </div>
-              <div style={{
-                display:"flex", 
-                justifyContent:"space-between", 
-                alignItems:"center", 
-                backgroundColor:"#228B22", 
-                backgroundColor:"#228B22", 
-                height:"4rem", 
-                borderRadius:"10px"}}
-              >
-                <div style={{textAlign:"center", color: "white", width:"45%"}}>
-                  <IoSpeedometer style={{fontSize:"1.5rem", marginBottom:"5px"}}/> 
-                  <div style={{fontSize:"0.9rem"}}>
-                  {newMarker.speed} kph
-                  </div>
-                </div>
-                <div style={{textAlign:"center", color: "white", width:"40%"}}>
-                  <BsIcons.BsFuelPumpFill style={{fontSize:"1.5rem", marginBottom:"5px"}}/> 
-                  <div style={{fontSize:"0.9rem"}}>
-                  {newMarker.fuel} %
-                  </div>
-                </div>
-              </div>
+            <div style={{textAlign:"center", fontSize:"0.9rem"}}>
+              {marker.time}
             </div>
             </Popup>
           </Marker>
       ))}
-      {/* <RoutingMachine waypoints={[
-        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
-        // Add the coordinates of the clicked point here
-      ]} /> */}
-      {/* <RoutingMachine waypoints={[
-        L.latLng(10.762622, 106.660172), // Starting coordinates (your current location)
-        // Add the coordinates of the clicked point here
-      ]} /> */}
+      
+      <Polyline pathOptions = {limeOptions} positions={multiPolyline}/>
+      <Polyline pathOptions = {redOptions} positions={multiPolyline2}/>
+
+      {markers.map((newMarker) => (
+          <Marker ref={initMarker} position={newMarker.geocode} icon={customIcon} zIndexOffset={1}>
+          </Marker>
+      ))}
+      {markers2.map((newMarker) => (
+          <Marker ref={initMarker} position={newMarker.geocode} icon={customIcon} zIndexOffset={1}>
+          </Marker>
+      ))}
     </MyMap>
 
   );
