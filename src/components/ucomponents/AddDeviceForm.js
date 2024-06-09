@@ -36,10 +36,6 @@ const AddDeviceForm = ({ isOpen, handleClose, onDeviceKeySubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!validator.isAlphanumeric(key)) {
-    //   alert('Key chỉ có thể chứa các ký tự chữ và số.');
-    //   return;
-    // }
     if (!validator.isAlphanumeric(devName)) {
       alert('Device name must contain only alphanumeric characters.');
       return;

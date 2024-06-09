@@ -9,6 +9,7 @@ import "./styles.module.css";
 import { doc, getDoc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from "../../firebase";
 import { useAuth } from "../pages/AuthContext";
+import useDebounce from "./useDebounce"; // import the debounce hook
 
 const customIcon = new Icon({
   iconUrl: "image/car.png",
@@ -27,7 +28,7 @@ function LocationMarker() {
     },
     locationfound(e) {
       setPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom());
+      map.flyTo(e.latlng);
     },
   });
 
@@ -43,79 +44,77 @@ const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id }) =
   const colors = tokens(theme.palette.mode);
   const { authUser } = useAuth();
   const [deviceData, setDeviceData] = useState([]);
+  const [chartInstances, setChartInstances] = useState({});
 
   const columnChartRef = useRef(null);
   const pieChartRef = useRef(null);
   const lineChartRef = useRef(null);
   const barChartRef = useRef(null);
 
+  const debouncedDeviceData = useDebounce(deviceData, 500); // 500ms debounce delay
+
   useEffect(() => {
     if (!authUser) return;
 
-    const fetchData = async () => {
-      const userRef = doc(db, 'users', authUser.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (userData.deviceKey) {
-          // Handle device key if needed
-        }
-      }
-
-      const devicesQuery = query(collection(db, "devices"), where("uid", "==", authUser.uid));
-      const unsub = onSnapshot(devicesQuery, (snapshot) => {
-        let fields = [];
-
-        snapshot.docs.forEach((doc) => {
-          const device = doc.data();
-          if (device) {
-            fields.push({
-              devName: device.devName,
-              devNum: device.devNum,
-              id: device.id,
-              lat: device.lat,
-              lng: device.lng,
-              speed: device.speed,
-              state: device.state,
-              time: device.t_v,
-              distance: device.total_distance,
-            });
-          }
-        });
-
-        setDeviceData(fields);
-        initializeCharts(fields);
-      });
-
-      return () => unsub();
-    };
-
-    fetchData();
+    const unsubscribe = fetchData(authUser.uid, setDeviceData);
+    
+    return () => unsubscribe();
   }, [authUser]);
 
-  const initializeCharts = (data) => {
+  const fetchData = (uid, setDeviceData) => {
+    const devicesQuery = query(collection(db, "devices"), where("uid", "==", uid));
+    const unsub = onSnapshot(devicesQuery, (snapshot) => {
+      let fields = [];
+      snapshot.docs.forEach((documentSnapshot) => {
+        const device = documentSnapshot.data();
+        fields.push({
+          devName: device.devName,
+          devNum: device.devNum,
+          id: device.id,
+          lat: device.lat,
+          lng: device.lng,
+          speed: device.speed,
+          state: device.state,
+          time: device.t_v,
+          distance: device.total_distance,
+        });
+      });
+      console.log(fields);
+      setDeviceData(fields);
+    });
+    return unsub;
+  };
+
+  const countVehicleStates = (data) => {
+    let driving = 0;
+    let parking = 0;
+    let inactive = 0;
+
+    data.forEach(device => {
+      if (device.state === 'Di chuyển') {
+        driving += 1;
+      } else if (device.state === 'Đang đỗ') {
+        parking += 1;
+      } else if (device.state === 'Inactive') {
+        inactive += 1;
+      }
+    });
+
+    return [driving, parking, inactive];
+  };
+
+  const initializeCharts = () => {
     initializeColumnChart();
     initializePieChart();
     initializeLineChart();
-    initializeBarChart(data);
+    initializeBarChart();
   };
 
   const initializeColumnChart = () => {
     const chartElement = columnChartRef.current;
     if (chartElement) {
       const options = {
-        series: [
-          {
-            name: 'Average Speed',
-            data: [
-              { x: 'Truck1', y: 60, goals: [{ name: 'Highest Speed', value: 77, strokeHeight: 5, strokeColor: '#775DD0' }] },
-              { x: 'Truck2', y: 50, goals: [{ name: 'Highest Speed', value: 70, strokeHeight: 5, strokeColor: '#775DD0' }] },
-              { x: 'Truck3', y: 57, goals: [{ name: 'Highest Speed', value: 72, strokeHeight: 5, strokeColor: '#775DD0' }] },
-              { x: 'Truck4', y: 55, goals: [{ name: 'Highest Speed', value: 80, strokeHeight: 5, strokeColor: '#775DD0' }] },
-              { x: 'Truck5', y: 49, goals: [{ name: 'Highest Speed', value: 69, strokeHeight: 5, strokeColor: '#775DD0' }] },
-            ]
-          }
-        ],
+        series: [],
         chart: { height: 350, type: 'bar' },
         plotOptions: { bar: { columnWidth: '60%' } },
         colors: ['#00E396'],
@@ -123,13 +122,18 @@ const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id }) =
         legend: {
           show: true,
           showForSingleSeries: true,
-          customLegendItems: ['Average Speed', 'Highest Speed'],
+          customLegendItems: ['Speed', 'Highest Speed'],
           markers: { fillColors: ['#00E396', '#775DD0'] }
         }
       };
 
       const chart = new ApexCharts(chartElement, options);
       chart.render();
+
+      setChartInstances(prevInstances => ({
+        ...prevInstances,
+        columnChart: chart
+      }));
     }
   };
 
@@ -144,7 +148,7 @@ const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id }) =
           toolbar: { show: false }
         },
         title: { text: 'Status', align: 'center' },
-        series: [20, 60, 20],
+        series: [],
         labels: ['Driving', 'Parking', 'Inactive'],
         plotOptions: {
           pie: { dataLabels: { offset: -10 } }
@@ -153,6 +157,11 @@ const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id }) =
 
       const chart = new ApexCharts(chartElement, options);
       chart.render();
+
+      setChartInstances(prevInstances => ({
+        ...prevInstances,
+        pieChart: chart
+      }));
     }
   };
 
@@ -191,37 +200,85 @@ const GIS = ({ devName, devNum, lat, lng, img, time, fuel, speed, state, id }) =
           offsetX: -5
         }
       };
+
       const chart = new ApexCharts(chartElement, options);
       chart.render();
+
+      setChartInstances(prevInstances => ({
+        ...prevInstances,
+        lineChart: chart
+      }));
     }
   };
 
-  const initializeBarChart = (data) => {
-    if (!Array.isArray(data)) {
-      console.error("Invalid data provided to initializeBarChart:", data);
-      return;
-    }
-
+  const initializeBarChart = () => {
     const chartElement = barChartRef.current;
-    const distances = data.map(device => device.distance);
-    const names = data.map(device => device.devName);
-
     if (chartElement) {
       const options = {
-        series: [{ name: "km", data: distances }],
+        series: [{ name: "km", data: [] }],
         chart: { type: 'bar', height: 300, width: 250 },
         toolbar: { offsetX: 120, offsetY: 50, show: true },
         plotOptions: {
           bar: { borderRadius: 4, borderRadiusApplication: 'end', horizontal: true }
         },
         dataLabels: { enabled: false },
-        xaxis: { categories: names },
+        xaxis: { categories: [] },
         title: { offsetY: 15, text: 'Distance by month', align: 'center' }
       };
+
       const chart = new ApexCharts(chartElement, options);
       chart.render();
+
+      setChartInstances(prevInstances => ({
+        ...prevInstances,
+        barChart: chart
+      }));
     }
   };
+
+  const updateCharts = (data) => {
+    if (chartInstances.columnChart) {
+      const speeds = data.map(device => device.speed);
+      const seriesData = data.map(device => ({
+        x: device.devName,
+        y: parseFloat(device.speed.toFixed(1))
+      }));
+      chartInstances.columnChart.updateSeries([{ name: 'Speed', data: seriesData }]);
+    }
+
+    if (chartInstances.pieChart) {
+      const [driving, parking, inactive] = countVehicleStates(data);
+      chartInstances.pieChart.updateSeries([driving, parking, inactive]);
+    }
+
+    // if (chartInstances.lineChart) {
+    //   const tripsCounts = data.map(device => device.tripsCount || 0);
+    //   chartInstances.lineChart.updateSeries([{ name: 'Trip Count', data: tripsCounts }]);
+    // }
+
+    if (chartInstances.barChart) {
+      const distances = data.map(device => device.distance);
+      chartInstances.barChart.updateSeries([{ name: 'km', data: distances }]);
+      chartInstances.barChart.updateOptions({ xaxis: { categories: data.map(device => device.devName) } });
+    }
+  };
+
+  useEffect(() => {
+    if (
+      columnChartRef.current && 
+      pieChartRef.current && 
+      lineChartRef.current && 
+      barChartRef.current
+    ) {
+      initializeCharts();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debouncedDeviceData.length > 0) {
+      updateCharts(debouncedDeviceData);
+    }
+  }, [debouncedDeviceData]);
 
   return (
     <Box gridTemplateColumns="repeat(8, 1fr)" gridAutoRows="180px" display="grid" gap="2px" marginBottom="20px">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import './Map.css';
 import { IoSpeedometer } from "react-icons/io5";
@@ -7,63 +7,37 @@ import { BsFillStopwatchFill } from "react-icons/bs";
 import { doc, getDoc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from "../pages/AuthContext";
+import CenterMap from "./CenterMap";
 
 const customIcon = new Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/3721/3721600.png",
   iconSize: [40, 40]
 });
 
-function LocationMarker() {
-  const [position, setPosition] = useState(null);
-  const map = useMapEvents({
-    click() {
-      map.locate();
-    },
-    locationfound(e) {
-      setPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom());
-    },
-  });
-
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>You are here</Popup>
-    </Marker>
-  );
-};
+const convertSpeedToKmh = (speedInMs) => {
+  return (speedInMs * 3.6).toFixed(0);
+}
 
 const formatTime = (datetime) => {
-  const date = new Date(datetime);
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+  if (!datetime || datetime.length < 14) {
+    return '';
+  }
+
+  const hours = datetime.substring(8, 10);
+  const minutes = datetime.substring(10, 12);
+
   return `${hours}:${minutes}`;
-}
-
-function CenterMap({ markers }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (markers.length > 0) {
-      const bounds = markers.map(marker => marker.geocode);
-      map.fitBounds(bounds);
-    }
-  }, [markers, map]);
-
-  return null;
-}
-
-const convertSpeedToKmh = (speedInMs) => {
-  return (speedInMs * 3.6).toFixed(2);
 }
 
 function MiniMap() {
   const { authUser } = useAuth();
   const [markers, setMarkers] = useState([]);
+  const [shouldFitBounds, setShouldFitBounds] = useState(true);
 
   useEffect(() => {
     const fetchDeviceKey = async () => {
       if (!authUser) return;
-      
+
       const userRef = doc(db, 'users', authUser.uid);
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
@@ -94,22 +68,44 @@ function MiniMap() {
           state: device.state,
           time: device.t_v,
           distance: device.total_distance,
-          geocode: [device.lat, device.lng]
+          geocode: [device.lat, device.lng],
+          lastUpdated: new Date() // Add a timestamp for when the data was last updated
         };
       });
 
       setMarkers(newMarkers);
+      setShouldFitBounds(true); // Set shouldFitBounds to true when markers are updated
     });
 
     return () => unsub();
   }, [authUser]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMarkers(prevMarkers => {
+        return prevMarkers.map(marker => {
+          const now = new Date();
+          const timeDiff = now - new Date(marker.lastUpdated);
+          if (timeDiff > 30000) { // 30 seconds
+            return {
+              ...marker,
+              speed: 0
+            };
+          }
+          return marker;
+        });
+      });
+    }, 1000); // Check every second
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <MapContainer center={[10.763622, 106.640172]} zoom={12} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={18} />
-      <LocationMarker />
-      <CenterMap markers={markers} />
-
+      {/* <LocationMarker /> */}
+      <CenterMap markers={markers} shouldFitBounds={shouldFitBounds} /> {/* Pass shouldFitBounds state */}
+      
       {markers.map((marker, index) => (
         <Marker 
           key={index} 
