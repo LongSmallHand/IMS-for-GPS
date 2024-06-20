@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "844951431449",
+    "firebase_url": "https://loca-4d172-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "loca-4d172",
+    "storage_bucket": "loca-4d172.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844951431449:android:1e41cc1fcde0052cbd7d88",
+        "android_client_info": {
+          "package_name": "com.example.tracking_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
