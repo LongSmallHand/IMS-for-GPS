@@ -16,13 +16,12 @@ import AddDeviceForm from "./AddDeviceForm";
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 
-
 const Dashboard = () => {
   const { authUser, isLoading } = useAuth();
   const router = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
+
   // State involved in loading and updating device info
   const [devices, setDevices] = useState([]);
   const [locationsData, setLocationsData] = useState([]);
@@ -49,66 +48,19 @@ const Dashboard = () => {
     fetchDeviceKey();
   }, [authUser]);
 
-const handleClick = () => {
- setIsFormOpen(true);
-};
-
-const handleClose = () => {
- setIsFormOpen(false);
-};
-
-  
-
-  const handleLocationUpdate = (location) => {
-    // Cập nhật mảng locationsData với dữ liệu mới từ location
-    setLocationsData(prevLocations => [...prevLocations, location]);
+  const handleClick = () => {
+    setIsFormOpen(true);
   };
 
-  const [img, setImg] = useState(null);
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      try {
-        // giả sử 'path/to/image' là đường dẫn của hình ảnh trong Cloud Storage
-        const imgRef = ref(storage, 'https://firebasestorage.googleapis.com/v0/b/loca-4d172.appspot.com/o/photo%2F3.jpg?alt=media&token=ca78d61d-95fb-40b0-8f26-0378fba82ff9');
-        const url = await getDownloadURL(imgRef);
-        setImg(url); // cập nhật state img với URL của hình ảnh
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
-
-    fetchImage();
-  }, []);
-
-
-  function splitToHms(input) {
-    var h, m, s;
-    // input = input + 7000000;
-    // input = input.toString();
-    if (input.length === 8) {
-        h = input.slice(0, 2);
-        m = input.slice(2, 4);
-        s = input.slice(4, 6);
-    } else {
-        h = input.slice(0, 1);
-        m = input.slice(1, 3);
-        s = input.slice(3, 5);
-    }
-  
-    return h + "h" + m + "m";
-  }
-
-  
-
-
-
+  const handleClose = () => {
+    setIsFormOpen(false);
+  };
 
   useEffect(() => {
     if (!isLoading && !authUser) {
       router.push('/');
     }
-  }, [authUser, isLoading])
+  }, [authUser, isLoading]);
 
   useEffect(() => {
     if (authUser && newDeviceKey) {
@@ -121,7 +73,6 @@ const handleClose = () => {
     }
   }, [authUser, newDeviceKey]);
 
-
   const handleDownload = () => {
     // Tạo một mảng dữ liệu mẫu
     const data = [
@@ -131,24 +82,24 @@ const handleClose = () => {
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(data);
-  
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Dữ liệu');
-  
+
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-  
+
     const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  
+
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-  
+
     a.download = 'Report.xlsx';
 
     a.click();
-  
+
     URL.revokeObjectURL(a.href);
   };
-  
+
   // Hàm chuyển đổi chuỗi thành mảng đệm
   function s2ab(s) {
     const buf = new ArrayBuffer(s.length);
@@ -157,8 +108,6 @@ const handleClose = () => {
     return buf;
   }
 
-
-  
   return (
     <Box m="20px 20px 20px 220px" minWidth="900px">
       <Box display="flex" justifyContent="space-between" height="40px" alignItems="center">
@@ -176,16 +125,16 @@ const handleClose = () => {
             onClick={handleClick}
           >
             <BsIcons.BsCartPlusFill style={{ margin: "0 10px 0 0"}} />
-            Thêm thiết bị
+            Thêm/Xoá thiết bị
           </Button>
           {isFormOpen && (
-      <div>
-        <AddDeviceForm isOpen={isFormOpen}
-          handleClose={handleClose}
-          onDeviceKeySubmit={setNewDeviceKey} />
+            <div>
+              <AddDeviceForm isOpen={isFormOpen}
+                handleClose={handleClose}
+                onDeviceKeySubmit={setNewDeviceKey} />
               {/* <button onClick={handleClose}>Đóng</button> */}
-      </div>
-    )}
+            </div>
+          )}
           {/* <Button
             sx={{
               backgroundColor: colors.blueAccent[700],
@@ -202,24 +151,21 @@ const handleClose = () => {
           </Button> */}
         </Box>
       </Box>
-      
-  {devices.map((device) => (
-    
-  <GIS
-    id={device.id}
-    devName={device.devName}
-    devNum={device.devNum}
-    lat={device.lat}
-    lng={device.lng}
-    img={img}
-    time= {device.time}// Update thời gian chụp hình gần nhất
-    fuel={device.fuel}
-    speed={device.speed}
-    state={device.state} // set = "Đang đỗ" nếu speed < 2km/h
-    onLocationUpdate={handleLocationUpdate}
-  />
-))}
-      
+
+      {devices.map((device, index) => (
+        <Box key={index} display="flex" flexDirection="column" gap="10px">
+          <GIS
+            id={device.id}
+            devName={device.devName}
+            devNum={device.devNum}
+            lat={device.lat}
+            lng={device.lng}
+            time={device.t_v}
+            speed={device.speed}
+            state={device.state}
+          />
+        </Box>
+      ))}
     </Box>
   );
 };

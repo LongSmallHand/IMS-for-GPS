@@ -1,40 +1,111 @@
-from flask import Flask, request, jsonify
-import numpy as np
+from numpy import array
+from keras.models import Sequential
+from keras.layers import LSTM, Dense, Bidirectional, Dropout
 import pandas as pd
-from datetime import datetime
-from keras.models import load_model
+from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import matplotlib.pyplot as plt
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# split a univariate sequence
+def split_sequence(sequence, n_steps):
+    X, y = list(), list()
+    for i in range(len(sequence)):
+        # find the end of this pattern
+        end_ix = i + n_steps
+        # check if we are beyond the sequence
+        if end_ix > len(sequence)-1:
+            break
+        # gather input and output parts of the pattern
+        seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
+        X.append(seq_x)
+        y.append(seq_y)
+    return array(X), array(y)
 
-app = Flask(__name__)
+# Load data
+df = pd.read_csv('./file.csv')
 
-# Load your pre-trained model
-model = load_model("D:\DATN\IMS-for-GPS//lstm_model.keras")
+# Extract the "Speed" column as a list
+speed_column = df['Speed'].tolist()
 
-# Assuming your data is in a DataFrame df and has been normalized
-# Convert 'Time' to a numerical format
-# df = pd.read_csv("D:\DATN\IMS-for-GPS\src\components\AI//4.csv")
-# df['Time'] = df['Time'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f').timestamp())
+# define input sequence
+raw_seq = speed_column
 
-# Define a route for prediction
-@app.route('/predict_speed', methods=['POST'])
-def predict_speed():
-    try:
-        data = request.get_json()
-        
-        latitude = float(data['Latitude'])  # Convert to float
-        longitude = float(data['Longitude'])  # Convert to float
-        altitude = float(data['Altitude'])  # Convert to float
-        speed = float(data['Speed'])  # Convert to float
+# choose a number of time steps
+n_steps = 16
 
-        # Reshape input to match model's input shape
-        x_input = np.array([[latitude, longitude, altitude, speed]])
-        x_input = x_input.reshape((1, 1, 4))
+# split into samples
+X, y = split_sequence(raw_seq, n_steps)
 
-        # Make prediction
-        predicted_speed = model.predict(x_input)[0][0]
+# reshape from [samples, timesteps] into [samples, timesteps, features]
+n_features = 1
+X = X.reshape((X.shape[0], X.shape[1], n_features))
 
-        return jsonify({'predicted_speed': float(predicted_speed)})
-    except Exception as e:
-        return jsonify({'error': str(e)})
+# Splitting data into train and test sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# define model
+model = Sequential()
+model.add(Bidirectional(LSTM(128, activation='relu'), input_shape=(n_steps, n_features)))
+model.add(Dropout(0.2))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')
+
+# fit model
+history = model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2, verbose=0)
+
+# evaluate model
+loss = model.evaluate(X_test, y_test)
+print("Test Loss:", loss)
+
+# make predictions
+y_pred = model.predict(X_test)
+
+
+# Calculate RMSE
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print("Root Mean Squared Error:", rmse)
+
+# Calculate MAE
+mae = mean_absolute_error(y_test, y_pred)
+print("Mean Absolute Error:", mae)
+
+# Calculate MSE
+mse = mean_squared_error(y_test, y_pred)
+print("Mean Squared Error:", mse)
+
+# Calculate MAPE
+mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100
+print("Mean Absolute Percentage Error:", mape)
+
+
+accuracy = 100 - mape
+print("Accuracy:", accuracy)
+
+# save model
+model.save('lstm_model.keras')
+
+model.summary()
+
+
+# Plot the true values vs. predicted values
+plt.figure(figsize=(10, 6))
+plt.plot(y_test, label='True Values')
+plt.plot(y_pred, label='Predicted Values')
+plt.title('True vs Predicted Values')
+plt.xlabel('Samples')
+plt.ylabel('Speed')
+plt.legend()
+plt.show()
+
+# Plot training & validation loss values
+plt.figure(figsize=(10, 6))
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()

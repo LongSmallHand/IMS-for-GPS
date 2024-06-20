@@ -1,1 +1,0 @@
-A mobile app use for collecting GPS data and save in Download folder as .csv file
